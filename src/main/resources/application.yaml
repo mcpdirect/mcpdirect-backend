@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url : jdbc:postgresql://${MCPDIRECT_DB_HOST}/${MCPDIRECT_DB}
+    username : ${MCPDIRECT_DB_USER}
+    password : ${MCPDIRECT_DB_PASSWORD}
+    driver-class-name : org.postgresql.Driver
+
+  data:
+    redis:
+      host: ${MCPDIRECT_REDIS_HOST}
+      port: ${MCPDIRECT_REDIS_PORT}
+      password: ${MCPDIRECT_REDIS_PASSWORD}
