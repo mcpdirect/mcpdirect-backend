@@ -312,7 +312,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler im
                 req.name = req.device;
             }
             agent = new AIPortToolAgent(
-                    account.id,engineId, now,
+                    account.id,engineId, now,req.deviceId,
                     req.device,req.name,req.tags,1
             );
             toolMapper.insertToolAgent(agent);

@@ -20,6 +20,7 @@ public class AIPortAccount {
     public long id;
     public String account;
     public int status;
+    public String keySeed;
 
     public AIPortAccount() {
     }
@@ -28,13 +29,14 @@ public class AIPortAccount {
         this.id = id;
     }
 
-    public AIPortAccount(String account, int status) {
-        this(ID.nextId(),account, status);
-    }
+//    public AIPortAccount(String account, int status) {
+//        this(ID.nextId(),account, status);
+//    }
 
-    public AIPortAccount(long id, String account, int status) {
+    public AIPortAccount(long id, String account, int status,String keySeed) {
         this.id = id;
         this.account = account;
         this.status = status;
+        this.keySeed = keySeed;
     }
 }

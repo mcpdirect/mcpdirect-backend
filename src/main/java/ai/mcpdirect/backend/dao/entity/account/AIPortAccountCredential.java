@@ -10,11 +10,11 @@ public class AIPortAccountCredential extends AIPortAccount{
 
     }
 
-    public AIPortAccountCredential(String account, int status, String password) {
-        this(ID.nextId(), account, status,password);
+    public AIPortAccountCredential(String account, int status, String password,String keySeed) {
+        this(ID.nextId(), account, status,password,keySeed);
     }
-    public AIPortAccountCredential(long id, String account, int status, String password) {
-        super(id, account, status);
+    public AIPortAccountCredential(long id, String account, int status, String password,String keySeed) {
+        super(id, account, status,keySeed);
         this.password = password;
     }
 }

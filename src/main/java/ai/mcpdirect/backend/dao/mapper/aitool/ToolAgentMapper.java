@@ -9,10 +9,10 @@ import java.util.List;
 public interface ToolAgentMapper {
 
     String TABLE_NAME = "aitool.tool_agent";
-    String SELECT_FIELDS = "id, user_id userId, engine_id engineId, created, device, name, tags, status";
+    String SELECT_FIELDS = "id, user_id userId, engine_id engineId, created, device, name, tags, status,device_id";
 
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status) " +
-            "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status,device_id) " +
+            "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status},#{deviceId})")
     int insertToolAgent(AIPortToolAgent toolAgent);
 
     @Update("UPDATE " + TABLE_NAME + " SET created = #{created}, device = #{device}, name = #{name}, tags = #{tags}, status = #{status} WHERE id = #{id}")

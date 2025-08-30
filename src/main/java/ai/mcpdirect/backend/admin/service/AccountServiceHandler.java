@@ -81,7 +81,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
             return;
         }
         AIPortAccountCredential credential = new AIPortAccountCredential(
-                req.account, 1, req.password);
+                req.account, 1, req.password,AIPortAccessKeyGenerator.generateRandomKey(16));
         // if(username.isEmpty()){
         // credential.username = "U_"+credential.id;
         // }

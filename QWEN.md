@@ -1,4 +1,4 @@
-There are AIPort Admin java maven project
+There are MCPdirect backend maven project
 
 **the project structures are:**
 ```

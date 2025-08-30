@@ -199,6 +199,7 @@ public class AuthenticationServiceHandler {
 
     public static class AccountDetails {
         public String account;
+        public String accountKeySeed;
         public String accessToken;
         public int accessTokenType;
         public boolean newAccount;
@@ -243,6 +244,7 @@ public class AuthenticationServiceHandler {
                 if (ar.code == 0) {
                     // queryUserProperties(credentials.getId(), credentials.properties);
                     resp.data.account = credentials.account;
+                    resp.data.accountKeySeed = credentials.keySeed;
                     resp.data.accessToken = ar.data;
                     resp.data.accessTokenType = AIPortAccount.PASSWORD;
                     resp.data.userInfo = accountMapper.selectUser(credentials.id);
@@ -287,6 +289,7 @@ public class AuthenticationServiceHandler {
                 if (ar.code == 0) {
                     // queryUserProperties(credentials.getId(), credentials.properties);
                     resp.data.account = "anonymous";
+                    resp.data.accountKeySeed = credentials.keySeed;
                     resp.data.accessToken = ar.data;
                     resp.data.accessTokenType = AIPortAccount.ANONYMOUS;
                     resp.data.userInfo = accountMapper.selectUser(credentials.id);
@@ -317,7 +320,8 @@ public class AuthenticationServiceHandler {
 
             AIPortAnonymousCredential credential = new AIPortAnonymousCredential(
                     AIPortAccessKeyValidator.hashCode(secretKey),
-                    req.deviceId,SHA256.digest(secretKey),  1);
+                    req.deviceId,SHA256.digest(secretKey),  1,
+                    AIPortAccessKeyGenerator.generateRandomKey(16));
 
             if (req.userInfo == null) {
                 req.userInfo = new AIPortUser();
@@ -335,7 +339,8 @@ public class AuthenticationServiceHandler {
                 AccountMapper mapper = sqlSession.getMapper(AccountMapper.class);
                 mapper.insertUserAnonymousCredential(credential);
                 mapper.insertUserAccountCredential(new AIPortAccountCredential(
-                        credential.id,"anonymous@"+ credential.id,1,""));
+                        credential.id,"anonymous@"+ credential.id, 1,
+                        "",AIPortAccessKeyGenerator.generateRandomKey(16)));
                 mapper.insertUser(req.userInfo);
                 return true;
             });

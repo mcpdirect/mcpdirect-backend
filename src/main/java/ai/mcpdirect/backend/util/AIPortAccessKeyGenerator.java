@@ -32,9 +32,12 @@ public class AIPortAccessKeyGenerator {
         long xor = AIPortAccessKeyValidator.hashCode(keyPart)^userId;
         return prefix+"-" + keyPart + Long.toString(xor,36);
     }
-    public static String generateRandomKey() throws Exception {
+    public static String generateRandomKey(){
+        return generateRandomKey(AIPortAccessKeyValidator.KEY_PART_LENGTH);
+    }
+    public static String generateRandomKey(int keyLength){
         // 生成随机部分
-        StringBuilder randomPartBuilder = new StringBuilder(AIPortAccessKeyValidator.KEY_PART_LENGTH);
+        StringBuilder randomPartBuilder = new StringBuilder(keyLength);
 
         for (int i = 0; i < AIPortAccessKeyValidator.KEY_PART_LENGTH; i++) {
             int randomIndex = secureRandom.nextInt(CHARACTERS.length);

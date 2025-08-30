@@ -14,10 +14,10 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper{
 
     String anonymousTable = "account.user_anonymous";
     String anonymousTableFields = "id,secret_key,device_id";
-    String anonymousTableSelectFields = "id,secret_key secretKey,device_id deviceId";
+    String anonymousTableSelectFields = "a.id,a.secret_key secretKey,a.device_id deviceId\n";
 
     //accounts.sdp_user_account===========================
-    String selectUserAccountCredential="SELECT a.id,a.account, a.password, a.status FROM "
+    String selectUserAccountCredential="SELECT a.id,a.account, a.password, a.status,a.key_seed keySeed FROM "
         +userAccountTable+" a\n";
     @Select(selectUserAccountCredential+"where a.id=#{id}")
     AIPortAccountCredential selectUserAccountCredentialById(long id);
@@ -42,7 +42,7 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper{
     void updateUserAccountPassword(@Param("id") long id, @Param("password") String newPassword);
 
     @Insert("INSERT INTO "+userAccountTable+" (id,account, password,status)\n" +
-            "VALUES(#{id}, #{account}, #{password},#{status});")
+            "VALUES(#{id}, #{account}, #{password},#{status},#{keySeed});")
     void insertUserAccountCredential(AIPortAccountCredential account);
 
     @Delete("DELETE from "+userAccountTable+" WHERE id=#{id}")
@@ -68,9 +68,10 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper{
     @Delete("DELETE from "+anonymousTable+" WHERE id=#{id}")
     void deleteUserAnonymous(long id);
 
-    @Select("SELECT "+anonymousTableSelectFields+" FROM "+anonymousTable+" where device_id=#{deviceId}")
+    @Select("SELECT "+anonymousTableSelectFields+" FROM "+anonymousTable+" a where a.device_id=#{deviceId}")
     AIPortAnonymous selectUserAnonymousByDeviceId(String deviceId);
 
-    @Select("SELECT "+anonymousTableSelectFields+" FROM "+anonymousTable+" where id=#{id}")
+    @Select("SELECT "+anonymousTableSelectFields+",b.key_seed keySeed FROM "+anonymousTable+" a " +
+            "left join "+userAccountTable+" b on a.id=b.id where a.id=#{id}")
     AIPortAnonymousCredential selectUserAnonymousCredential(long id);
 }

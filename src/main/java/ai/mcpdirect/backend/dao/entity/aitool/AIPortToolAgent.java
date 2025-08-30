@@ -7,6 +7,7 @@ public class AIPortToolAgent {
     public long userId;
     public String engineId;
     public long created;
+    public long deviceId;
     public String device;
     public String name;
     public String tags;
@@ -14,12 +15,13 @@ public class AIPortToolAgent {
 
     public AIPortToolAgent() {}
 
-    public AIPortToolAgent(long userId, String engineId, long created, String device,
-                           String name, String tags, int status) {
+    public AIPortToolAgent(long userId, String engineId, long created,long deviceId,
+                           String device, String name, String tags, int status) {
         this.id = ID.nextId();
         this.userId = userId;
         this.engineId = engineId;
         this.created = created;
+        this.deviceId = deviceId;
         this.device = device;
         this.name = name;
         this.tags = tags;

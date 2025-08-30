@@ -8,8 +8,8 @@ public class AIPortAnonymous extends AIPortAccount{
     public AIPortAnonymous(long id){
         super(id);
     }
-    public AIPortAnonymous(long id, String deviceId,int status) {
-        super(id,"anonymous",status);
+    public AIPortAnonymous(long id, String deviceId,int status,String keySeed) {
+        super(id,"anonymous",status,keySeed);
         this.deviceId = deviceId;
     }
 }
