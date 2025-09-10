@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] - 2025-09-10
+
+### Added
+- App version endpoint for client version checking
+- Response structure for app version information including force upgrade flag
+
+### Changed
+- Updated hstp-service-engine dependency from version 1.3.0 to 1.4.0
+- Removed unused lookup/tools/provider service endpoint code
+
 ## [1.1.0] - 2025-08-30
 
 ### Added

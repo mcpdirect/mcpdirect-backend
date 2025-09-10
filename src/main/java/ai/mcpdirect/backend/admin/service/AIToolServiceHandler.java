@@ -67,27 +67,23 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler im
         }
         return accessKey;
     }
-//    public static class RequestOfLookupToolsProvider{
-//        public long userId;
-//    }
-//    @ServiceRequestMapping("lookup/tools/provider")
-//    public void lookupToolsProvider(
-//            @ServiceRequestAuthentication AIPortAccessKeyCredential key,
-//            @ServiceResponseMessage ResponseOfService<AIToolsDirectory> resp
-//            ) throws Exception {
-//
-//        List<AIPortToolsProvider> providers = toolMapper.selectToolsProviderByUserId(key.userId);
-//        AIToolsDirectory provider = AIToolsDirectory.create(key.userId);
-//        if(providers!=null) {
-//            for (AIPortToolsProvider p : providers) {
-//                AIToolsDirectory.Tools tools = new AIToolsDirectory.Tools();
-//                tools.engineId = p.providerId;
-//                tools.descriptions = p.tools;
-//                provider.tools.put(tools.engineId,tools);
-//            }
-//            resp.success(provider);
-//        }
-//    }
+    public static class RequestOfAppVersion{
+        public String appId;
+    }
+    public static class ResponseOfAppVersion{
+        public String appId;
+        public String name;
+        public String version;
+        public boolean forceUpgrade;
+    }
+    @ServiceRequestMapping("app/version")
+    public void appVersion(
+            ServiceRequest request,
+            @ServiceRequestMessage RequestOfAppVersion req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<Object> resp
+    ) throws Exception {
+
+    }
 
     public static class RequestOfAnnounce{
 
