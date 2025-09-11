@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2025-09-11
+
+### Changed
+- Updated project version to 1.1.2-SNAPSHOT
+- Updated hstp-service-engine dependency from version 1.4.0 to 1.4.1
+
 ## [1.2.1] - 2025-09-10
 
 ### Added
