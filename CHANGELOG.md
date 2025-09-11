@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1] - 2025-09-10
+
+### Added
+- Database schema SQL files for account and aitool modules
+- App version table schema with platform and architecture support
+
+### Changed
+- Updated project version to 1.1.1-SNAPSHOT
+- Refactored AccessKeyServiceHandler to use KeyValueCacheFactory directly
+- Removed unused instance variable in AccessKeyServiceHandler
+
 ## [1.2.0] - 2025-09-10
 
 ### Added

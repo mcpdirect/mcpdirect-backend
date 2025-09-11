@@ -17,11 +17,11 @@ import ai.mcpdirect.backend.util.KeyValueCacheFactory;
 @ServiceRequestMapping("/")
 public class AccessKeyServiceHandler {
 
-    private KeyValueCache cache;
-    @ServiceRequestInit
-    public void init(){
-        cache = KeyValueCacheFactory.getInstance();
-    }
+//    private KeyValueCache cache;
+//    @ServiceRequestInit
+//    public void init(){
+//        cache = KeyValueCacheFactory.getInstance();
+//    }
     public static class RequestOfVerify extends RequestOfCreate{
         public String accessKey;
         public RequestOfVerify (){}
@@ -37,7 +37,7 @@ public class AccessKeyServiceHandler {
         @ServiceResponseMessage SimpleServiceResponseMessage<Boolean> resp
     ){
         if(req.userId>0&&req.accessKey!=null){
-            resp.success(Objects.equals(cache.get(req.userId+"-"+req.userDevice), req.accessKey));
+            resp.success(Objects.equals(KeyValueCacheFactory.getInstance().get(req.userId+"-"+req.userDevice), req.accessKey));
         }else{
             resp.success(false);
         }
@@ -60,7 +60,7 @@ public class AccessKeyServiceHandler {
         if(req.userId>0){
             String apiKey = AIPortAccessKeyGenerator.generateApiKey(
                             AIPortAccessKeyValidator.PREFIX_AUK, req.userId);
-            cache.set(req.userId+"-"+req.userDevice, apiKey, 3600*24*30);
+            KeyValueCacheFactory.getInstance().set(req.userId+"-"+req.userDevice, apiKey, 3600*24*30);
             resp.success(apiKey);
         }else{
             resp.success(null);
@@ -73,7 +73,7 @@ public class AccessKeyServiceHandler {
             @ServiceResponseMessage SimpleServiceResponseMessage<Boolean> resp
     ){
         if(req.userId>0&&req.accessKey!=null){
-            cache.remove(req.userId+"-"+req.userDevice);
+            KeyValueCacheFactory.getInstance().remove(req.userId+"-"+req.userDevice);
             resp.success(true);
         }else{
             resp.success(false);
