@@ -4,7 +4,7 @@ import ai.mcpdirect.backend.dao.entity.account.*;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
-public interface AccountMapper extends AccessKeyMapper,OtpMapper{
+public interface AccountMapper extends AccessKeyMapper,OtpMapper,TeamMapper{
 //    String otpTable = "account.otp";
     String userTable = "account.user";
     String userAccountTable = "account.user_account";

@@ -40,4 +40,9 @@ public class AIPortApiKeyGeneratorTest {
         }
 
     }
+
+    @Test
+    public void testPrimitive(){
+        System.out.println(long.class.isPrimitive());
+    }
 }

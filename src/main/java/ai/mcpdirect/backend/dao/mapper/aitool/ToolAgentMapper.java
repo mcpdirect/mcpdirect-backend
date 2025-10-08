@@ -11,6 +11,8 @@ public interface ToolAgentMapper {
     String TABLE_NAME = "aitool.tool_agent";
     String SELECT_FIELDS = "id, user_id userId, engine_id engineId, created, device, name, tags, status,device_id";
 
+    String TABLE_JOIN_NAME = "aitool.tool_agent ta";
+
     @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status,device_id) " +
             "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status},#{deviceId})")
     int insertToolAgent(AIPortToolAgent toolAgent);
