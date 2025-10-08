@@ -3,10 +3,8 @@ package ai.mcpdirect.backend.admin.service;
 import ai.mcpdirect.backend.dao.AIToolDataHelper;
 import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccessKeyCredential;
-import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortTool;
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolAgent;
-import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolPermission;
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolProvider;
 import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
@@ -26,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-@ServiceName("aitools.management")
+@ServiceName("aitools.discovery")
 @ServiceRequestMapping("/")
 public class AIToolDiscoveryServiceHandler extends ServiceRequestAuthenticationHandler implements ServiceBroadcastListener{
     private static final Logger LOG = LoggerFactory.getLogger(AIToolDiscoveryServiceHandler.class);
@@ -154,57 +152,5 @@ public class AIToolDiscoveryServiceHandler extends ServiceRequestAuthenticationH
             directory.tools.put(tools.engineId,tools);
         }
         resp.success(directory);
-    }
-
-    public static class RequestOfGrantToolPermission{
-        public List<AIPortToolPermission> permissions;
-    }
-    @ServiceRequestMapping("tool/permission/grant")
-    public void grantToolPermission(
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfGrantToolPermission req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermission>> resp
-    ) throws Exception {
-        if(!req.permissions.isEmpty()) {
-            long now = System.currentTimeMillis();
-//            List<Integer> keyList = permissions.stream().map(p -> p.accessKeyId).toList();
-//            List<Long> agentList = permissions.stream().map(p -> p.agentId).toList();
-//            List<Long> makerList = permissions.stream().map(p -> p.makerId).toList();
-//            AccountDataHelper accountDataHelper = AccountDataHelper.getInstance();
-//            List<AIPortAccessKey> keys = accountDataHelper.getAccountMapper().selectAccessKeyByIds(account.id, keyList);
-//            Map<Integer, AIPortAccessKey> keyMap = keys.stream().collect(Collectors.toMap(key -> key.id, key -> key));
-//            List<AIPortToolsAgent> agents = toolMapper.selectToolsAgentByIds(agentList);
-//            Map<Long, AIPortToolsAgent> agentMap = agents.stream().collect(Collectors.toMap(agent -> agent.id, agent -> agent));
-//            List<AIPortToolsMaker> makers = toolMapper.selectToolsMakerByIds(makerList);
-//            Map<Long, AIPortToolsMaker> makerMap = makers.stream().collect(Collectors.toMap(maker -> maker.id, maker -> maker));
-            helper.executeSql(sqlSession -> {
-                AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
-                for (AIPortToolPermission permission : req.permissions) {
-                    permission.userId = account.id;
-                    permission.lastUpdated = now;
-//                permission.userStatus = account.status;
-//                permission.accessKeyStatus = keyMap.get(permission.accessKeyId).status;
-//                permission.agentStatus = agentMap.get(permission.agentId).status;
-//                permission.makerStatus = makerMap.get(permission.makerId).status;
-                    int status = permission.status;
-                    if(status==Short.MAX_VALUE){
-                        permission.status = 1;
-                        mapper.insertToolPermission(permission);
-                    }else if(status==0||status==1){
-                        mapper.updateToolPermission(permission);
-                    }
-                }
-                return true;
-            });
-
-            resp.success(req.permissions);
-            try {
-                engine.broadcast(
-                        publishBroadcastUSL,
-                        "{\"tools\":[{\"userId\":" + account.id + ",\"lastUpdated\":" + now + "}]}");
-            }catch (Exception e){
-                LOG.error("broadcast()",e);
-            }
-        }
     }
 }

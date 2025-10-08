@@ -1,7 +1,5 @@
 package ai.mcpdirect.backend.dao.entity.account;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 public class AIPortAccessKey {
     public static final int STATUS_ENABLE = 1;
     public static final int STATUS_DISABLE = 0;

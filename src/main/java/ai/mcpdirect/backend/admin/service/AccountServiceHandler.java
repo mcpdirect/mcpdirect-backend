@@ -314,4 +314,23 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
             resp.success(false);
         }
     }
+
+    public static class RequestOfCreateTeam{
+
+    }
+    @ServiceRequestMapping("team/create")
+    public void createTeam(){
+
+    }
+    @ServiceRequestMapping("team/query")
+    public void queryTeam(){
+
+    }
+    @ServiceRequestMapping("team/update")
+    public void updateTeam(){
+
+    }
+    public void inviteTeamMember(){
+
+    }
 }

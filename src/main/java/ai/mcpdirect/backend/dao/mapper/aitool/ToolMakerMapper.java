@@ -11,6 +11,8 @@ public interface ToolMakerMapper {
     String TABLE_NAME = "aitool.tool_maker";
 //    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated, hash, tools, type, name, tags, agent_id agentId";
     String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId";
+
+    String TABLE_JOIN_NAME = "aitool.tool_maker tm";
     String SELECT_JOIN_FIELDS = "tm.id, tm.created, tm.status, tm.last_updated lastUpdated,tm.type, tm.name, tm.tags, tm.agent_id agentId";
 
 //    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, hash, tools, type, name, tags, agent_id) " +
@@ -22,6 +24,22 @@ public interface ToolMakerMapper {
 
     @Update("UPDATE " + TABLE_NAME + " SET status = #{status} WHERE id = #{id}")
     int updateToolMakerStatus(@Param("id")long id,@Param("status")int status);
+
+    @Update("UPDATE " + TABLE_NAME + " SET name = #{name} WHERE id = #{id}")
+    int updateToolMakerName(@Param("id")long id,@Param("name")String name);
+
+    @Update("UPDATE " + TABLE_NAME + " SET tags = #{tags} WHERE id = #{id}")
+    int updateToolMakerTags(@Param("id")long id,@Param("tags")String tags);
+
+    @Update("UPDATE " + TABLE_NAME +
+            " SET " +
+            "<trim suffixOverrides=\",\">" +
+            "<if test='status != null'>status = #{status},</if>" +
+            "<if test='name != null'>name = #{name},</if>" +
+            "<if test='tags != null'>tags = #{tags},</if>" +
+            "</trim> " +
+            "WHERE id = #{id}")
+    int updateToolMaker(@Param("id")long id,@Param("name")String name,@Param("tags")String tags,@Param("status")Integer status);
 
     @Delete("DELETE FROM " + TABLE_NAME + " WHERE id = #{id}")
     int deleteToolMaker(@Param("id")long id);
@@ -52,6 +70,19 @@ public interface ToolMakerMapper {
 
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE agent_id = #{agentId}")
     List<AIPortToolMaker> selectToolMakerByAgentId(@Param("agentId") long agentId);
+
+    @Select("<script>SELECT " + SELECT_JOIN_FIELDS + " FROM " + TABLE_JOIN_NAME + "\n" +
+            "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
+            "WHERE ta.user_id = #{userId}\n" +
+            "<if test=\"type!=null\">and tm.type=#{type}</if>" +
+            "<if test=\"name!=null\">and LOWER(tm.name) LIKE CONCAT('%', #{name}, '%')</if>" +
+            "</script>")
+    List<AIPortToolMaker> selectToolMakerByUserId(@Param("userId") long userId,@Param("name")String name,@Param("type") Integer type);
+
+    @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
+            " WHERE agent_id = #{userId} and type=0\n" +
+            "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
+    List<AIPortToolMaker> selectVirtualToolMakerByUserId(@Param("userId") long userId,@Param("name")String name);
 
     @Select("<script>SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +"\n"+ """
                                 WHERE agent_id IN

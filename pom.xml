@@ -5,14 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ai.mcpdirect</groupId>
     <artifactId>mcpdirect-backend</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.test.skip>true</maven.test.skip>
-        <util-version>1.0.0</util-version>
-        <jedis.version>5.1.0</jedis.version>
+        <jedis.version>6.2.0</jedis.version>
         <spring-boot-version>3.5.5</spring-boot-version>
         <mybatis-spring-boot-version>3.0.5</mybatis-spring-boot-version>
     </properties>
