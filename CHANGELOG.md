@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased] - 2025-10-08
+
+### Added
+- Entity classes generated from SQL files in sql/ directory
+- AccountEntity from account.sql
+- AIToolEntity from aitool.sql
+- Public field declarations with primitive types for all entity fields
+
+## [1.2.5] - 2025-10-05
+
+### Added
+- TeamMapper interface with select, insert, and update methods for team and team_member tables
+
+## [1.2.4] - 2025-10-05
+
+### Added
+- AIPortTeam and AIPortTeamMember entity classes for team management
+
 ## [1.2.3] - 2025-09-11
 
 ### Changed
