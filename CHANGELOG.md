@@ -3,10 +3,14 @@
 ## [Unreleased] - 2025-10-08
 
 ### Added
-- Entity classes generated from SQL files in sql/ directory
-- AccountEntity from account.sql
-- AIToolEntity from aitool.sql
-- Public field declarations with primitive types for all entity fields
+- New entity classes for team management: AIPortTeam, AIPortTeamMember, AIPortToolMakerTeam
+- Virtual tool entities: AIPortVirtualTool and AIPortVirtualToolPermission
+- TeamMapper interface for team-related database operations
+- Updated service handlers: AIToolAgentServiceHandler, AIToolDiscoveryServiceHandler, AIToolMakerServiceHandler, AIToolServiceHandler, AccountServiceHandler
+- Updated mapper interfaces: AIToolMapper, ToolAgentMapper, ToolMakerMapper, VirtualToolMapper, AccountMapper
+- Test class: AIPortApiKeyGeneratorTest
+- Modifications to account and aitool SQL schema files
+- Configuration updates in .qwen/settings.json, QWEN.md, and pom.xml
 
 ## [1.2.5] - 2025-10-05
 
