@@ -254,7 +254,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     @ServiceRequestMapping("all/details/query")
-    public void queryToolAgents(
+    public void queryToolAgentDetails(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceResponseMessage SimpleServiceResponseMessage<AllToolAgentsDetails> resp
     ){
@@ -275,5 +275,13 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
         toolAgentsDetails.tools = tools;
         toolAgentsDetails.permissions = toolMapper.selectToolPermissionsByUserId(account.id);
         resp.success(toolAgentsDetails);
+    }
+
+    @ServiceRequestMapping("query")
+    public void queryToolAgents(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolAgent>> resp
+    ){
+        resp.success(toolMapper.selectToolAgentsByUserId(account.id));
     }
 }

@@ -12,6 +12,12 @@
 - Modifications to account and aitool SQL schema files
 - Configuration updates in .qwen/settings.json, QWEN.md, and pom.xml
 
+### Changed
+- Updated AIPortVirtualToolPermission entity with additional fields and methods
+- Enhanced ToolPermissionMapper with new permission-related operations
+- Modified service handlers: AIToolAgentServiceHandler, AIToolMakerServiceHandler, AIToolServiceHandler with improved functionality
+- Updated ToolMakerMapper with additional methods for tool maker management
+
 ## [1.2.5] - 2025-10-05
 
 ### Added

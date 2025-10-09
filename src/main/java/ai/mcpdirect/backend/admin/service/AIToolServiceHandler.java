@@ -147,6 +147,33 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
     ) throws Exception {
         if(req.makerId>0) {
             resp.success(toolMapper.selectVirtualToolByMakerId(req.makerId));
+        }else{
+            resp.success(toolMapper.selectVirtualTools(account.id));
+        }
+    }
+
+    public static class RequestOfQueryToolPermissions{
+        public int accessKeyId;
+    }
+    @ServiceRequestMapping("permission/query")
+    public void queryToolPermissions(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryToolPermissions req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermission>> resp
+    ) throws Exception {
+        if(req.accessKeyId>0) {
+            resp.success(toolMapper.selectToolPermissionByAccessKey(account.id,req.accessKeyId));
+        }
+    }
+
+    @ServiceRequestMapping("virtual/permission/query")
+    public void queryVirtualTools(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryToolPermissions req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortVirtualToolPermission>> resp
+    ) throws Exception {
+        if(req.accessKeyId>0) {
+            resp.success(toolMapper.selectVirtualToolPermissionByAccessKey(account.id,req.accessKeyId));
         }
     }
 }
