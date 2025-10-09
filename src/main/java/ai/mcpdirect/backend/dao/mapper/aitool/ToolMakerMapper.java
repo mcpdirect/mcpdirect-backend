@@ -74,10 +74,12 @@ public interface ToolMakerMapper {
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS + " FROM " + TABLE_JOIN_NAME + "\n" +
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
             "WHERE ta.user_id = #{userId}\n" +
+            "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
             "<if test=\"type!=null\">and tm.type=#{type}</if>" +
             "<if test=\"name!=null\">and LOWER(tm.name) LIKE CONCAT('%', #{name}, '%')</if>" +
             "</script>")
-    List<AIPortToolMaker> selectToolMakerByUserId(@Param("userId") long userId,@Param("name")String name,@Param("type") Integer type);
+    List<AIPortToolMaker> selectToolMakerByUserId(@Param("userId") long userId,@Param("name")String name,
+                                                  @Param("type") Integer type,@Param("agentId")Long agentId);
 
     @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
             " WHERE agent_id = #{userId} and type=0\n" +

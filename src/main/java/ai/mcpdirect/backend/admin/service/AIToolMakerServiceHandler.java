@@ -96,6 +96,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     public static class RequestOfQueryToolMaker{
         public String name;
         public Integer type;
+        public Long toolAgentId;
     }
     @ServiceRequestMapping("query")
     public void queryToolMakers(
@@ -114,7 +115,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             if(req.type!=null&&req.type==-1){
                 req.type = null;
             }
-            list.addAll(toolMapper.selectToolMakerByUserId(account.id,req.name,req.type));
+            list.addAll(toolMapper.selectToolMakerByUserId(account.id,req.name,req.type,req.toolAgentId));
         }
         resp.success(list);
     }
