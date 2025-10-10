@@ -41,6 +41,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
 
     public static class RequestOfGrantToolPermission{
         public List<AIPortToolPermission> permissions;
+        public List<AIPortVirtualToolPermission> virtualPermissions;
     }
     @ServiceRequestMapping("permission/grant")
     public void grantToolPermission(
@@ -77,9 +78,20 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
                         mapper.updateToolPermission(permission);
                     }
                 }
+                for (AIPortVirtualToolPermission permission : req.virtualPermissions) {
+                    permission.userId = account.id;
+                    permission.lastUpdated = now;
+                    int status = permission.status;
+                    if(status==Short.MAX_VALUE){
+                        permission.status = 1;
+                        mapper.insertVirtualToolPermission(permission);
+                    }else if(status==0||status==1){
+                        mapper.updateVirtualToolPermission(permission);
+                    }
+                }
                 return true;
             });
-
+            req.permissions.addAll(req.virtualPermissions);
             resp.success(req.permissions);
             try {
                 engine.broadcast(
@@ -153,7 +165,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
     }
 
     public static class RequestOfQueryToolPermissions{
-        public int accessKeyId;
+        public long accessKeyId;
     }
     @ServiceRequestMapping("permission/query")
     public void queryToolPermissions(

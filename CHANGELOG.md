@@ -11,12 +11,14 @@
 - Test class: AIPortApiKeyGeneratorTest
 - Modifications to account and aitool SQL schema files
 - Configuration updates in .qwen/settings.json, QWEN.md, and pom.xml
+- New entity class AIPortToolPermission for tool permission management
 
 ### Changed
 - Updated AIPortVirtualToolPermission entity with additional fields and methods
 - Enhanced ToolPermissionMapper with new permission-related operations
 - Modified service handlers: AIToolAgentServiceHandler, AIToolMakerServiceHandler, AIToolServiceHandler with improved functionality
 - Updated ToolMakerMapper with additional methods for tool maker management
+- Enhanced AIToolDiscoveryServiceHandler and AIToolServiceHandler with improved discovery and service capabilities
 
 ## [1.2.5] - 2025-10-05
 

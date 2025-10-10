@@ -11,10 +11,14 @@ import java.util.List;
 public interface ToolPermissionMapper {
 
     String TABLE_NAME = "aitool.tool_permission";
+    String TABLE_JOIN_NAME = "aitool.tool_permission tp";
     String SELECT_FIELDS = "user_id userId, access_key_id accessKeyId, tool_id toolId, last_updated lastUpdated, status";
+    String SELECT_JOIN_FIELDS = "tp.user_id userId, tp.access_key_id accessKeyId, tp.tool_id toolId, tp.last_updated lastUpdated, tp.status";
 
     String TABLE_NAME_V = "aitool.virtual_tool_permission";
+    String TABLE_JOIN_NAME_V = "aitool.virtual_tool_permission tp";
     String SELECT_FIELDS_V = "user_id userId, access_key_id accessKeyId, tool_id toolId, original_tool_id originalToolId, last_updated lastUpdated, status";
+    String SELECT_JOIN_FIELDS_V = "tp.user_id userId, tp.access_key_id accessKeyId, tp.tool_id toolId,tp.original_tool_id originalToolId, tp.last_updated lastUpdated, tp.status";
 
     String SELECT_TOOL_FIELDS = "t.name,t.agent_id agentId,t.maker_id makerId,t.tags,t.meta_data metaData";
 
@@ -56,11 +60,16 @@ public interface ToolPermissionMapper {
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE user_id = #{userId} AND access_key_id = #{accessKeyId} AND tool_id = #{toolId}")
     AIPortToolPermission selectToolPermission(@Param("userId") long userId, @Param("accessKeyId") int accessKeyId, @Param("toolId") long toolId);
 
-    @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE user_id = #{userId} AND access_key_id = #{accessKeyId}")
-    List<AIPortToolPermission> selectToolPermissionByAccessKey(@Param("userId") long userId, @Param("accessKeyId") int accessKeyId);
+    @Select("SELECT " + SELECT_JOIN_FIELDS + ",t.name,t.agent_id agentId,t.maker_id makerId FROM " + TABLE_JOIN_NAME +"\n"+
+            "LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON tp.tool_id = t.id\n" +
+            " WHERE tp.user_id = #{userId} AND tp.access_key_id = #{accessKeyId}")
+    List<AIPortToolPermission> selectToolPermissionByAccessKey(@Param("userId") long userId, @Param("accessKeyId") long accessKeyId);
 
-    @Select("SELECT " + SELECT_FIELDS_V + " FROM " + TABLE_NAME_V + " WHERE user_id = #{userId} AND access_key_id = #{accessKeyId}")
-    List<AIPortVirtualToolPermission> selectVirtualToolPermissionByAccessKey(@Param("userId") long userId, @Param("accessKeyId") int accessKeyId);
+    @Select("SELECT " + SELECT_JOIN_FIELDS_V + ",t.name,vt.maker_id makerId FROM " + TABLE_JOIN_NAME_V +"\n"+
+            "LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON tp.original_tool_id = t.id\n" +
+            "LEFT JOIN "+VirtualToolMapper.TABLE_JOIN_NAME+" ON tp.tool_id = vt.id\n" +
+            " WHERE tp.user_id = #{userId} AND tp.access_key_id = #{accessKeyId}")
+    List<AIPortVirtualToolPermission> selectVirtualToolPermissionByAccessKey(@Param("userId") long userId, @Param("accessKeyId") long accessKeyId);
 
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE user_id = #{userId}")
     List<AIPortToolPermission> selectToolPermissionsByUserId(@Param("userId") long userId);

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -118,6 +119,12 @@ public class AIToolDiscoveryServiceHandler extends ServiceRequestAuthenticationH
     ) throws Exception {
         AIToolsDirectory directory = AIToolsDirectory.create(key.userId);
         List<AIPortTool> aiPortTools = toolMapper.selectPermittedTools(key.id);
+        aiPortTools.addAll(toolMapper.selectVirtualPermittedTools(key.id));
+        Map<Long,AIPortTool> aiPortToolMap = new HashMap<>();
+        for (AIPortTool aiPortTool : aiPortTools) {
+            aiPortToolMap.put(aiPortTool.id,aiPortTool);
+        }
+        aiPortTools = aiPortToolMap.values().stream().toList();
         List<Long> agentIds = aiPortTools.stream().map(t -> t.agentId).toList();
         if(agentIds.isEmpty()){
             directory.tools = Map.of();

@@ -6,4 +6,7 @@ public class AIPortToolPermission {
     public long toolId;
     public long lastUpdated;
     public int status;
+    public Long agentId;
+    public Long makerId;
+    public String name;
 }
