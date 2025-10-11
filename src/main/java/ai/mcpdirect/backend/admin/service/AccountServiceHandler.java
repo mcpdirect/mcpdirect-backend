@@ -256,7 +256,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
     public void queryAccessKey(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfQueryAccessKey req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortAccessKey>> resp) throws Exception {
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortAccessKey>> resp){
         if(req.keyId==null||req.keyId==0) {
             resp.success(accountMapper.selectAccessKeyByUserId(account.id));
         }else{

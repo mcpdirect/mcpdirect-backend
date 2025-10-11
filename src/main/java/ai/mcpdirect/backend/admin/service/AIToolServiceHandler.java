@@ -14,6 +14,7 @@ import ai.mcpdirect.backend.util.AIPortAuthenticationCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,8 +50,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceRequestMessage RequestOfGrantToolPermission req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermission>> resp
     ) throws Exception {
-        if(!req.permissions.isEmpty()) {
-            long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
 //            List<Integer> keyList = permissions.stream().map(p -> p.accessKeyId).toList();
 //            List<Long> agentList = permissions.stream().map(p -> p.agentId).toList();
 //            List<Long> makerList = permissions.stream().map(p -> p.makerId).toList();
@@ -61,45 +61,44 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
 //            Map<Long, AIPortToolsAgent> agentMap = agents.stream().collect(Collectors.toMap(agent -> agent.id, agent -> agent));
 //            List<AIPortToolsMaker> makers = toolMapper.selectToolsMakerByIds(makerList);
 //            Map<Long, AIPortToolsMaker> makerMap = makers.stream().collect(Collectors.toMap(maker -> maker.id, maker -> maker));
-            helper.executeSql(sqlSession -> {
-                AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
-                for (AIPortToolPermission permission : req.permissions) {
-                    permission.userId = account.id;
-                    permission.lastUpdated = now;
+        helper.executeSql(sqlSession -> {
+            AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
+            for (AIPortToolPermission permission : req.permissions) {
+                permission.userId = account.id;
+                permission.lastUpdated = now;
 //                permission.userStatus = account.status;
 //                permission.accessKeyStatus = keyMap.get(permission.accessKeyId).status;
 //                permission.agentStatus = agentMap.get(permission.agentId).status;
 //                permission.makerStatus = makerMap.get(permission.makerId).status;
-                    int status = permission.status;
-                    if(status==Short.MAX_VALUE){
-                        permission.status = 1;
-                        mapper.insertToolPermission(permission);
-                    }else if(status==0||status==1){
-                        mapper.updateToolPermission(permission);
-                    }
+                int status = permission.status;
+                if(status==Short.MAX_VALUE){
+                    permission.status = 1;
+                    mapper.insertToolPermission(permission);
+                }else if(status==0||status==1){
+                    mapper.updateToolPermission(permission);
                 }
-                for (AIPortVirtualToolPermission permission : req.virtualPermissions) {
-                    permission.userId = account.id;
-                    permission.lastUpdated = now;
-                    int status = permission.status;
-                    if(status==Short.MAX_VALUE){
-                        permission.status = 1;
-                        mapper.insertVirtualToolPermission(permission);
-                    }else if(status==0||status==1){
-                        mapper.updateVirtualToolPermission(permission);
-                    }
-                }
-                return true;
-            });
-            req.permissions.addAll(req.virtualPermissions);
-            resp.success(req.permissions);
-            try {
-                engine.broadcast(
-                        publishBroadcastUSL,
-                        "{\"tools\":[{\"userId\":" + account.id + ",\"lastUpdated\":" + now + "}]}");
-            }catch (Exception e){
-                LOG.error("broadcast()",e);
             }
+            for (AIPortVirtualToolPermission permission : req.virtualPermissions) {
+                permission.userId = account.id;
+                permission.lastUpdated = now;
+                int status = permission.status;
+                if(status==Short.MAX_VALUE){
+                    permission.status = 1;
+                    mapper.insertVirtualToolPermission(permission);
+                }else if(status==0||status==1){
+                    mapper.updateVirtualToolPermission(permission);
+                }
+            }
+            return true;
+        });
+        req.permissions.addAll(req.virtualPermissions);
+        resp.success(req.permissions);
+        try {
+            engine.broadcast(
+                    publishBroadcastUSL,
+                    "{\"tools\":[{\"userId\":" + account.id + ",\"lastUpdated\":" + now + "}]}");
+        }catch (Exception e){
+            LOG.error("broadcast()",e);
         }
     }
 
@@ -187,5 +186,16 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
         if(req.accessKeyId>0) {
             resp.success(toolMapper.selectVirtualToolPermissionByAccessKey(account.id,req.accessKeyId));
         }
+    }
+
+    @ServiceRequestMapping("permission/maker/summary/query")
+    public void queryToolPermissionsSummary(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermissionMakerSummary>> resp
+    ) throws Exception {
+        List<AIPortToolPermissionMakerSummary> summaries = new ArrayList<>();
+        summaries.addAll(toolMapper.selectToolPermissionMakerSummary(account.id));
+        summaries.addAll(toolMapper.selectVirtualToolPermissionMakerSummary(account.id));
+        resp.success(summaries);
     }
 }

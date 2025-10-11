@@ -57,14 +57,15 @@ public class AIToolDiscoveryServiceHandler extends ServiceRequestAuthenticationH
             ServiceRequest request, Class<?> authObjectType, int[] authRoles, boolean anonymous){
         String aiportAuth = request.getRequestHeaders().getHeader("mcpdirect-auth");
 
-        AIPortAccessKeyCredential accessKey = cache.get(aiportAuth);
-        Long userId;
-        if(accessKey==null&&(userId=AIPortAccessKeyValidator.extractUserId(
-                AIPortAccessKeyValidator.PREFIX_AIK,aiportAuth))!=null
-                &&(accessKey = accountMapper.selectAccessKeyCredentialById(AIPortAccessKeyValidator.hashCode(aiportAuth)))!=null){
-            cache.add(accessKey);
-        }
-        return accessKey;
+//        AIPortAccessKeyCredential accessKey = cache.get(aiportAuth);
+//        Long userId;
+//        if(accessKey==null&&(userId=AIPortAccessKeyValidator.extractUserId(
+//                AIPortAccessKeyValidator.PREFIX_AIK,aiportAuth))!=null
+//                &&(accessKey = accountMapper.selectAccessKeyCredentialById(AIPortAccessKeyValidator.hashCode(aiportAuth)))!=null){
+//            cache.add(accessKey);
+//        }
+//        return accessKey;
+        return accountMapper.selectAccessKeyCredentialById(AIPortAccessKeyValidator.hashCode(aiportAuth));
     }
 
     public static class RequestOfAnnounce{
