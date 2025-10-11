@@ -212,7 +212,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
     }
 
     public static class RequestOfModifyAccessKey extends RequestOfCreateAccessKey{
-        public int id;
+        public long id;
         public Integer status;
     }
 

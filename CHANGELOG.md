@@ -21,6 +21,7 @@
 - Updated ToolMakerMapper with additional methods for tool maker management
 - Enhanced AIToolDiscoveryServiceHandler and AIToolServiceHandler with improved discovery and service capabilities
 - Updated AccountServiceHandler with additional account management features
+- Further enhanced AccountServiceHandler with improved account management capabilities
 
 ## [1.2.5] - 2025-10-05
 
