@@ -2,6 +2,7 @@ package ai.mcpdirect.backend.dao.mapper.aitool;
 
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortTool;
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolPermission;
+import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolPermissionMakerSummary;
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortVirtualToolPermission;
 import org.apache.ibatis.annotations.*;
 
@@ -90,4 +91,19 @@ public interface ToolPermissionMapper {
             "AND t.status=1 AND t.agent_status=1 AND t.maker_status=1\n" +
             "ORDER BY t.agent_id")
     List<AIPortTool> selectVirtualPermittedTools(@Param("accessKeyId") long accessKeyId);
+
+    @Select("""
+            select ak.id accessKeyId,t.maker_id makerId,count(t.maker_id)  from account.access_key ak
+            left join aitool.tool_permission tp on tp.access_key_id = ak.id
+            left join aitool.tool t on t.id=tp.tool_id
+            where tp.status > 0 and
+            """+ "ak.user_id = #{userId} group by ak.id,t.maker_id")
+    List<AIPortToolPermissionMakerSummary> selectToolPermissionMakerSummary(long userId);
+    @Select("""
+            select ak.id accessKeyId,t.maker_id makerId,count(t.maker_id)  from account.access_key ak
+            left join aitool.virtual_tool_permission tp on tp.access_key_id = ak.id
+            left join aitool.virtual_tool t on t.id=tp.tool_id
+            where tp.status > 0 and
+            """+ "ak.user_id = #{userId} group by ak.id,t.maker_id")
+    List<AIPortToolPermissionMakerSummary> selectVirtualToolPermissionMakerSummary(long userId);
 }
