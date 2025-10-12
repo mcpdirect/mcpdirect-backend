@@ -6,6 +6,7 @@ import appnet.hstp.SimpleServiceResponseMessage;
 import appnet.hstp.annotation.ServiceRequestAuthentication;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
 import ai.mcpdirect.backend.util.AIPortAccessKeyValidator;
+import appnet.hstp.annotation.ServiceResponseException;
 
 public class ServiceRequestAuthenticationHandler {
     protected ServiceEngine engine;
@@ -26,5 +27,14 @@ public class ServiceRequestAuthenticationHandler {
             }
         }
         return null;
+    }
+
+    @ServiceResponseException
+    public SimpleServiceResponseMessage<?> catchServiceResponseException(
+            ServiceRequest request,Throwable t
+    ){
+        SimpleServiceResponseMessage<Object> resp = new SimpleServiceResponseMessage<>();
+        resp.message = t.getMessage();
+        return resp;
     }
 }
