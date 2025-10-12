@@ -22,6 +22,8 @@
 - Enhanced AIToolDiscoveryServiceHandler and AIToolServiceHandler with improved discovery and service capabilities
 - Updated AccountServiceHandler with additional account management features
 - Further enhanced AccountServiceHandler with improved account management capabilities
+- Updated pom.xml with dependency and configuration changes
+- Enhanced ServiceRequestAuthenticationHandler with improved authentication handling
 
 ## [1.2.5] - 2025-10-05
 
