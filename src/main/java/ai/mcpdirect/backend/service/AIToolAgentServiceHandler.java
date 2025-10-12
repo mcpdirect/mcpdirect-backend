@@ -1,27 +1,17 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.AIToolDataHelper;
-import ai.mcpdirect.backend.dao.AccountDataHelper;
-import ai.mcpdirect.backend.dao.entity.account.AIPortAccessKeyCredential;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
 import ai.mcpdirect.backend.dao.entity.aitool.*;
-import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
-import ai.mcpdirect.backend.util.AIPortAccessKeyValidator;
-import ai.mcpdirect.backend.util.AIPortAuthenticationCache;
-import ai.mcpdirect.backend.util.AIToolsDirectory;
 import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
 import appnet.hstp.annotation.*;
-import appnet.hstp.engine.util.JSON;
 import appnet.hstp.exception.USLSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker.TYPE_MCP;
 

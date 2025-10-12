@@ -1,4 +1,4 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import appnet.hstp.ServiceEngine;
 import appnet.hstp.ServiceRequest;

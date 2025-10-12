@@ -1,4 +1,4 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.AIToolDataHelper;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;

@@ -1,9 +1,9 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.entity.account.*;
 import ai.mcpdirect.backend.util.*;
 import appnet.hstp.annotation.*;
-import ai.mcpdirect.backend.admin.service.AccessKeyServiceHandler.RequestOfCreate;
+import ai.mcpdirect.backend.service.AccessKeyServiceHandler.RequestOfCreate;
 import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 

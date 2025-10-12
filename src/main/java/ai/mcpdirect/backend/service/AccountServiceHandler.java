@@ -1,4 +1,4 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ai.mcpdirect.backend.dao.entity.account.*;
+import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
 import appnet.hstp.annotation.*;
 
@@ -18,11 +19,11 @@ import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
 import ai.mcpdirect.backend.util.AIPortAccessKeyGenerator;
 import ai.mcpdirect.backend.util.AIPortAccessKeyValidator;
 
-import static ai.mcpdirect.backend.admin.service.AuthenticationServiceHandler.checkHash;
+import static ai.mcpdirect.backend.service.AuthenticationServiceHandler.checkHash;
 
 @ServiceName("account.management")
 @ServiceRequestMapping("/")
-public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
+public class AccountServiceHandler extends ServiceRequestAuthenticationHandler implements AccountServiceErrors{
     private AccountDataHelper helper;
     private AccountMapper accountMapper;
 //    private ServiceEngine engine;
@@ -316,21 +317,133 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
     }
 
     public static class RequestOfCreateTeam{
-
+        public String name;
     }
     @ServiceRequestMapping("team/create")
-    public void createTeam(){
-
+    public void createTeam(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfCreateTeam req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeam> resp
+    ){
+        if(req.name!=null&&!(req.name=req.name.trim()).isEmpty()){
+            long now = System.currentTimeMillis();
+            AIPortTeam aiPortTeam = AIPortTeam.build()
+                    .id(ID.nextId())
+                    .name(req.name)
+                    .ownerId(account.id)
+                    .status(1)
+                    .created(now)
+                    .lastUpdated(now);
+            accountMapper.insertTeam(aiPortTeam);
+            resp.success(aiPortTeam);
+        }
     }
     @ServiceRequestMapping("team/query")
-    public void queryTeam(){
-
+    public void queryTeam(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeam>> resp
+    ){
+        resp.success(accountMapper.selectTeamsByOwnerId(account.id));
     }
-    @ServiceRequestMapping("team/update")
-    public void updateTeam(){
 
+    public static class RequestOfModifyTeam{
+        public long id;
+        public String name;
+        public Integer status;
     }
-    public void inviteTeamMember(){
 
+    @ServiceRequestMapping("team/modify")
+    public void modifyTeam(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfModifyTeam req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeam> resp
+    ){
+        if(req.id>0 &&((req.name!=null&&!(req.name=req.name.trim()).isEmpty())
+                ||req.status!=null) &&accountMapper.updateTeam(
+                        AIPortTeam.build()
+                                .id(req.id)
+                                .ownerId(account.id)
+                                .name(req.name)
+                                .status(req.status)
+                                .lastUpdated(System.currentTimeMillis())
+        )>0) {
+            resp.success(accountMapper.selectTeamById(req.id,account.id));
+        }
+    }
+
+    public static class RequestOfInviteTeamMember{
+        public String account;
+        public long teamId;
+    }
+    @ServiceRequestMapping("team/member/invite")
+    public void inviteTeamMember(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfInviteTeamMember req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
+    ){
+        if(req.account!=null&&req.teamId>0) {
+            AIPortAccount u = accountMapper.selectUserAccount(req.account);
+            if(u==null){
+                resp.code = USER_NOT_EXIST;
+            }else if(u.id!=account.id){
+                AIPortTeam t = accountMapper.selectTeamById(req.teamId, account.id);
+                if(t==null){
+                    resp.code = TEAM_NOT_EXIST;
+                }else {
+                    long now = System.currentTimeMillis();
+                    AIPortTeamMember m = AIPortTeamMember.build()
+                            .teamId(req.teamId)
+                            .memberId(u.id)
+                            .status(1)
+                            .created(now)
+                            .lastUpdated(now)
+                            .expirationDate(-1L);
+                    accountMapper.insertTeamMember(m);
+                    resp.success(m);
+                }
+            }
+        }
+    }
+    public static class RequestOfQueryTeamMember{
+        public long teamId;
+    }
+    @ServiceRequestMapping("team/member/query")
+    public void queryTeamMember(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryTeamMember req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamMember>> resp
+    ){
+        if(req.teamId>0&&(accountMapper.selectTeamById(req.teamId, account.id))!=null) {
+            resp.success(accountMapper.selectTeamMembersByTeamId(req.teamId));
+        }else{
+            resp.code = TEAM_NOT_EXIST;
+        }
+    }
+
+    public static class RequestOfModifyTeamMember{
+        public long memberId;
+        public long teamId;
+        public Integer status;
+        public Long expirationDate;
+    }
+    @ServiceRequestMapping("team/member/modify")
+    public void modifyTeamMember(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfModifyTeamMember req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
+    ){
+        if(req.memberId>0&&req.teamId>0&&(accountMapper.selectTeamById(req.teamId, account.id))!=null) {
+            if(accountMapper.updateTeamMember(
+                    AIPortTeamMember.build()
+                            .teamId(req.teamId)
+                            .memberId(req.memberId)
+                            .status(req.status)
+                            .expirationDate(req.expirationDate)
+                            .lastUpdated(System.currentTimeMillis())
+            )>0){
+                resp.success(accountMapper.selectTeamMemberById(req.teamId,req.memberId));
+            }
+
+        }
     }
 }
