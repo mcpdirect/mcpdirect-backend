@@ -13,6 +13,8 @@
 - Configuration updates in .qwen/settings.json, QWEN.md, and pom.xml
 - New entity class AIPortToolPermission for tool permission management
 - New entity class AIPortToolPermissionMakerSummary for tool permission maker summary
+- New entity class AIPortUserAccount for user account management
+- New error handling class AccountServiceErrors for account service error management
 
 ### Changed
 - Updated AIPortVirtualToolPermission entity with additional fields and methods
@@ -24,6 +26,9 @@
 - Further enhanced AccountServiceHandler with improved account management capabilities
 - Updated pom.xml with dependency and configuration changes
 - Enhanced ServiceRequestAuthenticationHandler with improved authentication handling
+- Refactored service handlers from admin package to service package: AIToolAgentServiceHandler, AIToolDiscoveryServiceHandler, AIToolMakerServiceHandler, AIToolServiceHandler, AccessKeyServiceHandler, AccountServiceHandler, AuthenticationServiceHandler, ServiceRequestAuthenticationHandler
+- Updated AIPortAccount, AIPortTeam, AIPortTeamMember, AIPortUserAccount, and AIPortToolMaker entities with additional fields and methods
+- Enhanced TeamMapper and ToolMakerMapper with additional methods and capabilities
 
 ## [1.2.5] - 2025-10-05
 

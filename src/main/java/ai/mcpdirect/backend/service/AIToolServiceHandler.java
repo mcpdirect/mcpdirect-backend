@@ -1,4 +1,4 @@
-package ai.mcpdirect.backend.admin.service;
+package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.entity.aitool.*;
 import ai.mcpdirect.backend.util.ID;
@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

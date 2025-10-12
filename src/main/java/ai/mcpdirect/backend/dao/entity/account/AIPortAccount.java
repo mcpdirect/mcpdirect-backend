@@ -1,7 +1,5 @@
 package ai.mcpdirect.backend.dao.entity.account;
 
-import ai.mcpdirect.backend.util.ID;
-
 public class AIPortAccount {
     public static final int ACCOUNT_NOT_EXIST = 0x10000;
     public static final int ACCOUNT_EXISTED = 0x10001;
