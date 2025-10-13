@@ -40,8 +40,8 @@ public interface TeamMapper {
             """;
 
     // Team operations
-    @Select(selectTeam + "WHERE owner_id=#{ownerId} AND id = #{id}")
-    AIPortTeam selectTeamById(@Param("id") long id,@Param("ownerId") long ownerId);
+    @Select(selectTeam + "WHERE id = #{id}")
+    AIPortTeam selectTeamById(@Param("id") long id);
 
     @Select(selectTeam + "WHERE owner_id = #{ownerId}")
     List<AIPortTeam> selectTeamsByOwnerId(@Param("ownerId") long ownerId);
@@ -103,7 +103,7 @@ public interface TeamMapper {
             "last_updated=#{lastUpdated}" +
             "<if test='status != null'>,status = #{status}</if>" +
             "<if test='expirationDate != null'>,expiration_date = #{expirationDate}</if>" +
-            "WHERE team_id = #{teamMember.teamId} AND member_id = #{teamMember.memberId}</script>")
+            "WHERE team_id = #{teamId} AND member_id = #{memberId}</script>")
     int updateTeamMember(AIPortTeamMember teamMember);
 
     @Delete("DELETE FROM " + teamMemberTable + " WHERE team_id = #{teamId} AND member_id = #{memberId}")
