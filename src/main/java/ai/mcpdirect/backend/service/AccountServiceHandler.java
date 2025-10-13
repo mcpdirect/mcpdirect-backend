@@ -1,6 +1,7 @@
 package ai.mcpdirect.backend.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -343,7 +344,9 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeam>> resp
     ){
-        resp.success(accountMapper.selectTeamsByOwnerId(account.id));
+        List<AIPortTeam> list = new ArrayList<>(accountMapper.selectTeamsByOwnerId(account.id));
+        list.addAll(accountMapper.selectTeamsByMemberId(account.id));
+        resp.success(list);
     }
 
     public static class RequestOfModifyTeam{
@@ -382,7 +385,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
     ){
         if(req.account!=null&&req.teamId>0) {
-            AIPortAccount u = accountMapper.selectUserAccount(req.account);
+            AIPortUser u = accountMapper.selectUserByAccount(req.account);
             if(u==null){
                 resp.code = USER_NOT_EXIST;
             }else if(u.id!=account.id){
@@ -399,6 +402,8 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
                             .lastUpdated(now)
                             .expirationDate(-1L);
                     accountMapper.insertTeamMember(m);
+                    m.account = req.account;
+                    m.name = u.name;
                     resp.success(m);
                 }
             }

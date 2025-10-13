@@ -26,8 +26,8 @@ public interface TeamMapper {
             t.created,
             t.owner_id ownerId,
             t.status,
-            t.last_updated lastUpdated  FROM
-            """ + teamTable + " t\n";
+            t.last_updated lastUpdated
+            """;
 
     // Team Member queries
     String selectTeamMemberJoin = """
@@ -45,6 +45,14 @@ public interface TeamMapper {
 
     @Select(selectTeam + "WHERE owner_id = #{ownerId}")
     List<AIPortTeam> selectTeamsByOwnerId(@Param("ownerId") long ownerId);
+
+    @Select(selectTeamJoin +",ua.account ownerAccount,u.name ownerName\n" +
+            "FROM " + teamMemberTable + " tm\n" +
+            "LEFT JOIN "+teamTable+" t on tm.team_id= t.id\n"+
+            "LEFT JOIN "+AccountMapper.userAccountTable+" ua on ua.id=t.owner_id\n"+
+            "LEFT JOIN "+AccountMapper.userTable+" u on u.id=t.owner_id\n"+
+            "WHERE tm.member_id = #{memberId}")
+    List<AIPortTeam>selectTeamsByMemberId(long memberId);
     @Insert("INSERT INTO " + teamTable +
             "(id, name, created, owner_id,status,last_updated) VALUES " +
             "(#{id}, #{name}, #{created}, #{ownerId}, #{status},#{lastUpdated})")
@@ -88,7 +96,7 @@ public interface TeamMapper {
 
     @Insert("INSERT INTO " + teamMemberTable + 
             "(team_id, member_id, status, created, expiration_date,last_updated) VALUES " +
-            "(#{teamId}, #{memberId}, #{status}, #{created}, #{expirationDate},#{lastUpdated}")
+            "(#{teamId}, #{memberId}, #{status}, #{created}, #{expirationDate},#{lastUpdated})")
     void insertTeamMember(AIPortTeamMember teamMember);
 
     @Update("<script> UPDATE " + teamMemberTable + " SET " +

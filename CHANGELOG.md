@@ -29,6 +29,9 @@
 - Refactored service handlers from admin package to service package: AIToolAgentServiceHandler, AIToolDiscoveryServiceHandler, AIToolMakerServiceHandler, AIToolServiceHandler, AccessKeyServiceHandler, AccountServiceHandler, AuthenticationServiceHandler, ServiceRequestAuthenticationHandler
 - Updated AIPortAccount, AIPortTeam, AIPortTeamMember, AIPortUserAccount, and AIPortToolMaker entities with additional fields and methods
 - Enhanced TeamMapper and ToolMakerMapper with additional methods and capabilities
+- Updated AIPortTeam and AIPortUser entities with additional fields and methods
+- Enhanced AccountMapper and TeamMapper with additional methods and capabilities
+- Improved AccountServiceHandler with enhanced account and team management features
 
 ## [1.2.5] - 2025-10-05
 
