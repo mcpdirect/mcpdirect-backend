@@ -35,6 +35,8 @@
 - Further enhanced TeamMapper with additional team-related operations
 - Updated AccountServiceHandler with additional account management capabilities
 - Enhanced AIPortApiKeyGeneratorTest with additional test cases
+- Updated AIPortToolMaker and AIPortToolMakerTeam entities with additional fields and methods
+- Enhanced ToolMakerMapper with additional methods for tool maker management
 
 ## [1.2.5] - 2025-10-05
 
