@@ -71,7 +71,8 @@ public interface ToolMakerMapper {
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE agent_id = #{agentId}")
     List<AIPortToolMaker> selectToolMakerByAgentId(@Param("agentId") long agentId);
 
-    @Select("<script>SELECT " + SELECT_JOIN_FIELDS + ",ta.user_id userId FROM " + TABLE_JOIN_NAME + "\n" +
+    @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
+            ",ta.status agentStatus,ta.name agentName,ta.user_id userId FROM " + TABLE_JOIN_NAME + "\n" +
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
             "WHERE ta.user_id = #{userId}\n" +
             "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
