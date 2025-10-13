@@ -44,5 +44,7 @@ public class AIPortApiKeyGeneratorTest {
     @Test
     public void testPrimitive(){
         System.out.println(long.class.isPrimitive());
+        System.out.println(Long.MIN_VALUE+1);
+        System.out.println(Math.abs(Long.MIN_VALUE+1));
     }
 }

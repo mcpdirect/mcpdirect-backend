@@ -370,7 +370,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
                                 .status(req.status)
                                 .lastUpdated(System.currentTimeMillis())
         )>0) {
-            resp.success(accountMapper.selectTeamById(req.id,account.id));
+            resp.success(accountMapper.selectTeamById(req.id));
         }
     }
 
@@ -389,7 +389,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             if(u==null){
                 resp.code = USER_NOT_EXIST;
             }else if(u.id!=account.id){
-                AIPortTeam t = accountMapper.selectTeamById(req.teamId, account.id);
+                AIPortTeam t = accountMapper.selectTeamById(req.teamId);
                 if(t==null){
                     resp.code = TEAM_NOT_EXIST;
                 }else {
@@ -400,7 +400,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
                             .status(1)
                             .created(now)
                             .lastUpdated(now)
-                            .expirationDate(-1L);
+                            .expirationDate(Long.MIN_VALUE+1);
                     accountMapper.insertTeamMember(m);
                     m.account = req.account;
                     m.name = u.name;
@@ -409,6 +409,25 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             }
         }
     }
+
+    public static class RequestOfAcceptTeamMember{
+        public long teamId;
+        public long memberId;
+    }
+    @ServiceRequestMapping("team/member/accept")
+    public void acceptTeamMember(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfAcceptTeamMember req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
+    ){
+        AIPortTeamMember m;
+        if(account.id==req.memberId&&(m=accountMapper.selectTeamMemberById(req.teamId,req.memberId))!=null){
+            m.expirationDate = Math.abs(m.expirationDate);
+            accountMapper.updateTeamMember(m);
+            resp.success(m);
+        }
+    }
+
     public static class RequestOfQueryTeamMember{
         public long teamId;
     }
@@ -418,7 +437,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             @ServiceRequestMessage RequestOfQueryTeamMember req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamMember>> resp
     ){
-        if(req.teamId>0&&(accountMapper.selectTeamById(req.teamId, account.id))!=null) {
+        if(req.teamId>0&&(accountMapper.selectTeamById(req.teamId))!=null) {
             resp.success(accountMapper.selectTeamMembersByTeamId(req.teamId));
         }else{
             resp.code = TEAM_NOT_EXIST;
@@ -437,7 +456,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             @ServiceRequestMessage RequestOfModifyTeamMember req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
     ){
-        if(req.memberId>0&&req.teamId>0&&(accountMapper.selectTeamById(req.teamId, account.id))!=null) {
+        if(req.memberId>0&&req.teamId>0&&(accountMapper.selectTeamById(req.teamId))!=null) {
             if(accountMapper.updateTeamMember(
                     AIPortTeamMember.build()
                             .teamId(req.teamId)

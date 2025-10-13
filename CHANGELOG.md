@@ -32,6 +32,9 @@
 - Updated AIPortTeam and AIPortUser entities with additional fields and methods
 - Enhanced AccountMapper and TeamMapper with additional methods and capabilities
 - Improved AccountServiceHandler with enhanced account and team management features
+- Further enhanced TeamMapper with additional team-related operations
+- Updated AccountServiceHandler with additional account management capabilities
+- Enhanced AIPortApiKeyGeneratorTest with additional test cases
 
 ## [1.2.5] - 2025-10-05
 
