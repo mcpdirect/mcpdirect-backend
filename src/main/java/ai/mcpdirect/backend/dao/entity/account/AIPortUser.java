@@ -6,6 +6,7 @@ public class AIPortUser{
     public String language;
     public long created;
     public int type;
+    public String account;
     public AIPortUser(){}
     public AIPortUser(long id, String name,String language, long created, int type) {
         this.id = id;

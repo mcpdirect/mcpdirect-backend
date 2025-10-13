@@ -37,7 +37,13 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper,TeamMapper{
             +userTable+" a\n";
     @Select(selectUser+"where a.id=#{id}")
     AIPortUser selectUser(long id);
-    
+
+    @Select("SELECT a.id,a.\"name\",a.\"language\", a.created, a.\"type\" ,ua.account\n" +
+            "FROM " +userAccountTable+" ua\n" +
+            "LEFT JOIN "+userTable+" a on ua.id=a.id\n" +
+            "where ua.account=#{account}")
+    AIPortUser selectUserByAccount(String account);
+
     @Update("update "+userAccountTable+" set password=#{password} where id=#{id}")
     void updateUserAccountPassword(@Param("id") long id, @Param("password") String newPassword);
 
