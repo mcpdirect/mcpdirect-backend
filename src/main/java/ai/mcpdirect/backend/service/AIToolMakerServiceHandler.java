@@ -181,7 +181,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     @ServiceRequestMapping("team/query")
     public void queryTeamToolMakers(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
+            @ServiceRequestMessage RequestOfQueryTeamMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
     ) throws Exception {
         if(req.teamId<1||req.teamOwnerId<1){
@@ -194,5 +194,19 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             return;
         }
         resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
+    }
+    
+    @ServiceRequestMapping("update_user_id")
+    public void updateToolMakerUserId(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceResponseMessage SimpleServiceResponseMessage<Integer> resp
+    ) throws Exception {
+        // Only allow admin users to run this update operation
+        if ((account.userRoles & 0x4000) != 0x4000) {  // Assuming 0x4000 is the admin role
+            return;
+        }
+        
+        int updatedRows = toolMapper.updateToolMakerUserIdFromAgent();
+        resp.success(updatedRows);
     }
 }
