@@ -84,7 +84,7 @@ public interface TeamMapper {
             teamMemberTable + " tm\n"+
             "LEFT JOIN "+AccountMapper.userAccountTable+" ua on ua.id=tm.member_id\n"+
             "LEFT JOIN "+AccountMapper.userTable+" u on u.id=tm.member_id\n" +
-            "WHERE team_id = #{teamId} and member_id=#{memberId}")
+            "WHERE tm.team_id = #{teamId} and tm.member_id=#{memberId}")
     AIPortTeamMember selectTeamMemberById(@Param("teamId") long teamId,@Param("memberId") long memberId);
 
     @Select(selectTeamMemberJoin + ",ua.account,u.name FROM\n"+
