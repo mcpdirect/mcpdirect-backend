@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased] - 2025-10-14
+
+### Added
+- Database query operations for retrieving tool makers by user ID and team ID
+
 ## [Unreleased] - 2025-10-08
 
 ### Added
