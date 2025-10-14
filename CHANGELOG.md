@@ -9,6 +9,9 @@
 - Additional fields to AIPortToolMaker and AIPortToolPermission entities
 - Method to query tool makers by team ID in ToolMakerMapper
 
+### Changed
+- Identified need to update user_id in aitool.tool_maker table based on corresponding tool_agent's user_id when type is 1000
+
 ## [Unreleased] - 2025-10-08
 
 ### Added

@@ -108,4 +108,18 @@ public interface ToolMakerMapper {
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
             "WHERE ttm.team_id=#{teamId}")
     List<AIPortToolMaker> selectToolMakerByTeamId(@Param("teamId") long teamId);
+
+    @Update("UPDATE " + TABLE_NAME + 
+            " SET user_id = (" +
+            "   SELECT ta.user_id " +
+            "   FROM " + ToolAgentMapper.TABLE_NAME + " ta " +
+            "   WHERE ta.id = " + TABLE_NAME + ".agent_id" +
+            ") " +
+            "WHERE type = 1000 " +
+            "AND EXISTS (" +
+            "   SELECT 1 " +
+            "   FROM " + ToolAgentMapper.TABLE_NAME + " ta " +
+            "   WHERE ta.id = " + TABLE_NAME + ".agent_id" +
+            ")")
+    int updateToolMakerUserIdFromAgent();
 }
