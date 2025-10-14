@@ -102,7 +102,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
     }
 
     public static class RequestOfQueryTools{
-        public Long toolId;
+        public Long userId;
         public String name;
         public Long agentId;
         public Long makerId;
@@ -115,8 +115,22 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceRequestMessage RequestOfQueryTools req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTool>> resp
     ) throws Exception {
-        if(req.toolId!=null&&req.toolId>0) resp.success(List.of(toolMapper.selectToolById(req.toolId)));
-        else resp.success(toolMapper.selectTools(account.id,req.status,req.agentId,req.makerId,req.name));
+        if(req.userId==null||req.userId==0){
+            req.userId = account.id;
+        }
+        resp.success(toolMapper.selectTools(req.userId,req.status,req.agentId,req.makerId,req.name));
+    }
+
+    public static class RequestOfGetTool{
+        public long toolId;
+    }
+    @ServiceRequestMapping("get")
+    public void getTool(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetTool req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTool> resp
+    ) throws Exception {
+        if(req.toolId>0) resp.success(toolMapper.selectToolById(req.toolId));
     }
 
     public static class RequestOfModifyVirtualTools{
@@ -197,4 +211,5 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
         summaries.addAll(toolMapper.selectVirtualToolPermissionMakerSummary(account.id));
         resp.success(summaries);
     }
+
 }

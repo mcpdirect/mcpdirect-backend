@@ -82,6 +82,8 @@ public interface ToolMakerMapper {
     List<AIPortToolMaker> selectToolMakerByUserId(@Param("userId") long userId,@Param("name")String name,
                                                   @Param("type") Integer type,@Param("agentId")Long agentId);
 
+
+
     @Select("<script> SELECT " + SELECT_FIELDS + ",agent_id userId FROM " + TABLE_NAME +
             " WHERE agent_id = #{userId} and type=0\n" +
             "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
@@ -100,4 +102,10 @@ public interface ToolMakerMapper {
                                 #{item}
                                 </foreach></script>""")
     List<AIPortToolMaker> selectToolMakerByIds(@Param("makerIds") List<Long> makerIds);
+    @Select("SELECT " + SELECT_JOIN_FIELDS +",ttm.team_id teamId,ta.user_id userId\n" +
+            "FROM "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm\n" +
+            "LEFT JOIN "+TABLE_JOIN_NAME+" on tm.id=ttm.tool_maker_id\n" +
+            "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
+            "WHERE ttm.team_id=#{teamId}")
+    List<AIPortToolMaker> selectToolMakerByTeamId(@Param("teamId") long teamId);
 }

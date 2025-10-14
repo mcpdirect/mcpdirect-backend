@@ -3,7 +3,11 @@
 ## [Unreleased] - 2025-10-14
 
 ### Added
-- Database query operations for retrieving tool makers by user ID and team ID
+- Team-tool maker functionality with new entity AIPortTeamToolMaker and mapper TeamToolMakerMapper
+- New endpoints for managing tool makers by team: team/modify and team/query in AIToolMakerServiceHandler
+- Integration between team and tool maker systems
+- Additional fields to AIPortToolMaker and AIPortToolPermission entities
+- Method to query tool makers by team ID in ToolMakerMapper
 
 ## [Unreleased] - 2025-10-08
 

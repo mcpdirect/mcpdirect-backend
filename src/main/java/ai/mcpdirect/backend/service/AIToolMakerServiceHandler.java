@@ -1,8 +1,12 @@
 package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.AIToolDataHelper;
+import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
+import ai.mcpdirect.backend.dao.entity.account.AIPortTeam;
+import ai.mcpdirect.backend.dao.entity.account.AIPortTeamMember;
 import ai.mcpdirect.backend.dao.entity.aitool.*;
+import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
 import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
@@ -20,11 +24,13 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     private static final Logger LOG = LoggerFactory.getLogger(AIToolMakerServiceHandler.class);
 
     private AIToolMapper toolMapper;
+    private AccountMapper accountMapper;
 
     @ServiceRequestInit
     public void init(ServiceEngine engine){
         this.engine = engine;
         toolMapper = AIToolDataHelper.getInstance().getAIToolMapper();
+        accountMapper = AccountDataHelper.getInstance().getAccountMapper();
     }
 
     public static class RequestOfCreateToolMaker{
@@ -97,6 +103,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         public String name;
         public Integer type;
         public Long toolAgentId;
+        public Long teamId;
     }
     @ServiceRequestMapping("query")
     public void queryToolMakers(
@@ -117,6 +124,75 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             }
             list.addAll(toolMapper.selectToolMakerByUserId(account.id,req.name,req.type,req.toolAgentId));
         }
+        if(req.teamId!=null){
+            list.addAll(toolMapper.selectToolMakerByTeamId(req.teamId));
+        }
         resp.success(list);
+    }
+
+    public static class RequestOfModifyTeamToolMaker{
+        public long teamId;
+        public long teamOwnerId;
+        public List<AIPortTeamToolMaker> teamToolMakers;
+    }
+    @ServiceRequestMapping("team/modify")
+    public void modifyTeamToolMaker(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfModifyTeamToolMaker req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
+    ) throws Exception {
+
+        long now = System.currentTimeMillis();
+        if(req.teamId<1||req.teamOwnerId<1||req.teamToolMakers==null||req.teamToolMakers.isEmpty()){
+            return;
+        }
+        AIPortTeamMember m;
+        AIPortTeam t;
+        boolean isOwner = req.teamOwnerId==account.id;
+        if(isOwner&&((t=accountMapper.selectTeamById(req.teamId))==null||t.ownerId!=req.teamOwnerId)){
+            return;
+        }else if(!isOwner &&((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
+                ||m.status!=1||m.expirationDate<now)){
+            return;
+        }
+
+            AIToolDataHelper.getInstance().executeSql(sqlSession -> {
+                AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
+                for (AIPortTeamToolMaker tmt : req.teamToolMakers) if(tmt.toolMakerId>0){
+                    tmt.teamId = req.teamId;
+                    tmt.lastUpdated = now;
+                    int status = tmt.status;
+                    if(status==Short.MAX_VALUE){
+                        tmt.created = now;
+                        tmt.status = 1;
+                        mapper.insertTeamToolMaker(tmt);
+                    }else if(status==0||status==1){
+                        mapper.updateTeamToolMaker(tmt);
+                    }
+                }
+                return true;
+            });
+            resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
+    }
+    public static class RequestOfQueryTeamToolMaker{
+        public long teamId;
+        public long teamOwnerId;
+    }
+    @ServiceRequestMapping("team/query")
+    public void queryTeamToolMakers(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
+    ) throws Exception {
+        if(req.teamId<1||req.teamOwnerId<1){
+            return;
+        }
+        AIPortTeamMember m;
+        if(req.teamOwnerId!=account.id
+                &&((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
+                ||m.status!=1||m.expirationDate<System.currentTimeMillis())){
+            return;
+        }
+        resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
     }
 }

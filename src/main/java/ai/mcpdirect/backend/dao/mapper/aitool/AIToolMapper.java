@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAgentMapper,
         MCPServerConfigMapper, ToolMakerMapper,ToolPermissionMapper,VirtualToolMapper,
-        VirtualToolPermissionMapper{
+        VirtualToolPermissionMapper, TeamToolMakerMapper {
 
     String TABLE_NAME = "aitool.tool";
     String SELECT_FIELDS = "id, maker_id makerId, status, last_updated lastUpdated, name, tags, hash,agent_id agentId, agent_status agentStatus, maker_status makerStatus";
@@ -63,7 +63,7 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
             ta.user_id=#{userId}
             <if test="name!=null">AND t.name=#{name}</if>
             </script>""")
-    List<AIPortTool> selectTools(@Param("userId") long userId,
+    List<AIPortTool> selectTools(@Param("userId") Long userId,
                                  @Param("status") Integer status,
                                  @Param("agentId")Long agentId,
                                  @Param("makerId")Long makerId,
