@@ -12,6 +12,11 @@
 ### Changed
 - Verified that user_id in aitool.tool_maker table is already properly synchronized with corresponding tool_agent's user_id when type is 1000
 - No update operation needed as all records of type 1000 already have matching user_id values
+- Enhanced ToolMakerMapper to include user_id in SELECT_FIELDS and adjust related queries
+- Modified service methods to properly handle user_id for tool makers
+- Updated queryToolMakers method to include team-based and user-based lookups
+- Added response success in createToolMaker method
+- Updated query parameters for tool maker filtering
 
 ## [Unreleased] - 2025-10-08
 

@@ -83,6 +83,8 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                 req.maker.id = ID.nextId();
                 req.maker.status = 1;
                 req.maker.created = now;
+                req.maker.userId = account.id;
+                req.maker.lastUpdated = now;
                 toolMapper.insertToolMaker(req.maker);
                 m = req.maker;
                 if(m.type==TYPE_MCP&&req.mcpServerConfig!=null){

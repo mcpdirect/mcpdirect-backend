@@ -335,6 +335,14 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
                     .status(1)
                     .created(now)
                     .lastUpdated(now);
+            AIPortTeamMember aiPortTeamMember = AIPortTeamMember.build()
+                    .teamId(aiPortTeam.id)
+                    .memberId(account.id)
+                    .status(1)
+                    .created(now)
+                    .expirationDate(Long.MAX_VALUE)
+                    .lastUpdated(now);
+            accountMapper.insertTeamMember(aiPortTeamMember);
             accountMapper.insertTeam(aiPortTeam);
             resp.success(aiPortTeam);
         }

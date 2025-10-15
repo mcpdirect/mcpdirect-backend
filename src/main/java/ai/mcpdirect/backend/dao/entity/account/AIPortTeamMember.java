@@ -1,6 +1,6 @@
 package ai.mcpdirect.backend.dao.entity.account;
 
-public class AIPortTeamMember extends AIPortUserAccount{
+public class AIPortTeamMember extends AIPortUser{
     public long teamId;
     public long memberId;
 
@@ -8,9 +8,6 @@ public class AIPortTeamMember extends AIPortUserAccount{
     public long created;
     public Long expirationDate;
     public long lastUpdated;
-    public String name;
-    public String account;
-
 
     public AIPortTeamMember teamId(long teamId) {
         this.teamId = teamId;

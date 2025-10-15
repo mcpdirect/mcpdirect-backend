@@ -1,6 +1,7 @@
 package ai.mcpdirect.backend.dao.mapper.aitool;
 
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker;
+import ai.mcpdirect.backend.dao.mapper.account.TeamMapper;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -10,15 +11,16 @@ public interface ToolMakerMapper {
 
     String TABLE_NAME = "aitool.tool_maker";
 //    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated, hash, tools, type, name, tags, agent_id agentId";
-    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId";
+    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId,user_id userId";
 
     String TABLE_JOIN_NAME = "aitool.tool_maker tm";
-    String SELECT_JOIN_FIELDS = "tm.id, tm.created, tm.status, tm.last_updated lastUpdated,tm.type, tm.name, tm.tags, tm.agent_id agentId";
+    String SELECT_JOIN_FIELDS = "tm.id, tm.created, tm.status, tm.last_updated lastUpdated,tm.type, tm.name, tm.tags," +
+            "tm.agent_id agentId, tm.user_id userId";
 
 //    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, hash, tools, type, name, tags, agent_id) " +
 //            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{hash}, #{tools}, #{type}, #{name}, #{tags}, #{agentId})")
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id) " +
-            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id,user_id) " +
+            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId},#{userId})")
 
     void insertToolMaker(AIPortToolMaker toolsMaker);
 
@@ -72,7 +74,7 @@ public interface ToolMakerMapper {
     List<AIPortToolMaker> selectToolMakerByAgentId(@Param("agentId") long agentId);
 
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
-            ",ta.status agentStatus,ta.name agentName,ta.user_id userId FROM " + TABLE_JOIN_NAME + "\n" +
+            ",ta.status agentStatus,ta.name agentName FROM " + TABLE_JOIN_NAME + "\n" +
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
             "WHERE ta.user_id = #{userId}\n" +
             "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
@@ -84,7 +86,7 @@ public interface ToolMakerMapper {
 
 
 
-    @Select("<script> SELECT " + SELECT_FIELDS + ",agent_id userId FROM " + TABLE_NAME +
+    @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
             " WHERE agent_id = #{userId} and type=0\n" +
             "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
     List<AIPortToolMaker> selectVirtualToolMakerByUserId(@Param("userId") long userId,@Param("name")String name);
@@ -102,24 +104,16 @@ public interface ToolMakerMapper {
                                 #{item}
                                 </foreach></script>""")
     List<AIPortToolMaker> selectToolMakerByIds(@Param("makerIds") List<Long> makerIds);
-    @Select("SELECT " + SELECT_JOIN_FIELDS +",ttm.team_id teamId,ta.user_id userId\n" +
+    @Select("SELECT " + SELECT_JOIN_FIELDS +",ttm.team_id teamId\n" +
             "FROM "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm\n" +
             "LEFT JOIN "+TABLE_JOIN_NAME+" on tm.id=ttm.tool_maker_id\n" +
-            "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
             "WHERE ttm.team_id=#{teamId}")
-    List<AIPortToolMaker> selectToolMakerByTeamId(@Param("teamId") long teamId);
+    List<AIPortToolMaker> selectToolMakersByTeamId(@Param("teamId") long teamId);
 
-    @Update("UPDATE " + TABLE_NAME + 
-            " SET user_id = (" +
-            "   SELECT ta.user_id " +
-            "   FROM " + ToolAgentMapper.TABLE_NAME + " ta " +
-            "   WHERE ta.id = " + TABLE_NAME + ".agent_id" +
-            ") " +
-            "WHERE type = 1000 " +
-            "AND EXISTS (" +
-            "   SELECT 1 " +
-            "   FROM " + ToolAgentMapper.TABLE_NAME + " ta " +
-            "   WHERE ta.id = " + TABLE_NAME + ".agent_id" +
-            ")")
-    int updateToolMakerUserIdFromAgent();
+    @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
+            "FROM "+TeamMapper.teamMemberTable+" atm\n" +
+            "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
+            "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id\n" +
+            "WHERE atm.member_id=#{userId}")
+    List<AIPortToolMaker> selectToolMakersByUserId(@Param("userId") long userId);
 }

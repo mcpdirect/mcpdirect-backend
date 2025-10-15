@@ -47,6 +47,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     ){
         AIPortToolMaker maker = new AIPortToolMaker();
         maker.id = ID.nextId();
+        maker.userId = account.id;
         maker.name = req.name;
         maker.type = req.type;
         maker.tags = req.tags;
@@ -55,6 +56,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         maker.created = System.currentTimeMillis();
         maker.lastUpdated = maker.created;
         toolMapper.insertToolMaker(maker);
+        resp.success(maker);
     }
 
     public static class RequestOfModifyToolMaker{
@@ -100,8 +102,14 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     public static class RequestOfQueryToolMaker{
-        public String name;
+        @ServiceRequestSchema(
+                description = """
+                        type = null means select all tool makers and virtual too makers,
+                        type = 0 means select all virtual tool makers
+                        type > 0 means select tool makers with the type"""
+        )
         public Integer type;
+        public String name;
         public Long toolAgentId;
         public Long teamId;
     }
@@ -118,14 +126,16 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         if(req.type==null||req.type==0){
             list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name));
         }
-        if(req.type==null||req.type!=0){
-            if(req.type!=null&&req.type==-1){
+        if(req.type==null||req.type>0){
+            if(req.type!=null&&req.type==Integer.MAX_VALUE){
                 req.type = null;
             }
             list.addAll(toolMapper.selectToolMakerByUserId(account.id,req.name,req.type,req.toolAgentId));
         }
         if(req.teamId!=null){
-            list.addAll(toolMapper.selectToolMakerByTeamId(req.teamId));
+            list.addAll(toolMapper.selectToolMakersByTeamId(req.teamId));
+        }else{
+            list.addAll(toolMapper.selectToolMakersByUserId(account.id));
         }
         resp.success(list);
     }
@@ -181,7 +191,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     @ServiceRequestMapping("team/query")
     public void queryTeamToolMakers(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfQueryTeamMaker req,
+            @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
     ) throws Exception {
         if(req.teamId<1||req.teamOwnerId<1){
@@ -194,19 +204,5 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             return;
         }
         resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
-    }
-    
-    @ServiceRequestMapping("update_user_id")
-    public void updateToolMakerUserId(
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceResponseMessage SimpleServiceResponseMessage<Integer> resp
-    ) throws Exception {
-        // Only allow admin users to run this update operation
-        if ((account.userRoles & 0x4000) != 0x4000) {  // Assuming 0x4000 is the admin role
-            return;
-        }
-        
-        int updatedRows = toolMapper.updateToolMakerUserIdFromAgent();
-        resp.success(updatedRows);
     }
 }
