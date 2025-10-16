@@ -15,19 +15,16 @@ public interface ToolAgentMapper {
 
     @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status,device_id) " +
             "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status},#{deviceId})")
-    int insertToolAgent(AIPortToolAgent toolAgent);
-
-    @Update("UPDATE " + TABLE_NAME + " SET created = #{created}, device = #{device}, name = #{name}, tags = #{tags}, status = #{status} WHERE id = #{id}")
-    int updateToolAgent(AIPortToolAgent toolAgent);
+    void insertToolAgent(AIPortToolAgent toolAgent);
 
     @Update("UPDATE " + TABLE_NAME + " SET status = #{status} WHERE id = #{id}")
-    int updateToolAgentStatus(AIPortToolAgent toolAgent);
+    int updateToolAgentStatus(AIPortToolAgent agent);
 
     @Update("UPDATE " + TABLE_NAME + " SET name = #{name} WHERE id = #{id}")
-    int updateToolAgentName(AIPortToolAgent toolAgent);
+    int updateToolAgentName(AIPortToolAgent agent);
 
     @Update("UPDATE " + TABLE_NAME + " SET tags = #{tags} WHERE id = #{id}")
-    int updateToolAgenTags(AIPortToolAgent toolAgent);
+    int updateToolAgentTags(AIPortToolAgent agent);
 
 //    @Update("UPDATE " + TABLE_NAME + " SET user_id=#{to} WHERE user_id=#{from}")
 //    int transferToolAgents(@Param("from")long from,@Param("to")long to);

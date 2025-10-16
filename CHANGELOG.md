@@ -17,6 +17,11 @@
 - Updated queryToolMakers method to include team-based and user-based lookups
 - Added response success in createToolMaker method
 - Updated query parameters for tool maker filtering
+- Consolidated tool maker modification endpoints into a single 'modify' method with comprehensive functionality
+- Improved security checks for tool maker modifications to ensure proper user ownership
+- Updated ToolAgentMapper with improved method signatures
+- Added comprehensive 'modify' method for tool agents allowing name, tags, and status updates
+- Standardized parameter naming across various service handlers
 
 ## [Unreleased] - 2025-10-08
 

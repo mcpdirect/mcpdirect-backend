@@ -193,18 +193,36 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
         }
     }
 
-    @ServiceRequestMapping("status/set")
-    public void setToolAgentStatus(
+    public static class RequestOfModifyAgent{
+        public long agentId;
+        public String name;
+        public String tags;
+        public Integer status;
+    }
+    @ServiceRequestMapping("modify")
+    public void modifyAgent(
             ServiceRequest request,
             @ServiceRequestAuthentication("auk")
             AIPortAccount account,
-            @ServiceRequestMessage AIPortToolAgent req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<Boolean> resp
-    ) throws Exception {
-//        helper.executeSql(sqlSession -> {
-//            AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
-//            mapper.update
-//        });
+            @ServiceRequestMessage RequestOfModifyAgent req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolAgent> resp
+    ){
+        AIPortToolAgent a;
+        if(req.agentId>0&&(a=toolMapper.selectToolAgentById(req.agentId))!=null&&a.userId==account.id){
+            if(req.name!=null&&!(req.name=req.name.trim()).isEmpty()){
+                a.name = req.name;
+                toolMapper.updateToolAgentName(a);
+            }
+            if(req.tags!=null&&!(req.tags=req.tags.trim()).isEmpty()){
+                a.tags = req.tags;
+                toolMapper.updateToolAgentTags(a);
+            }
+            if(req.status!=null){
+                a.status = req.status;
+                toolMapper.updateToolAgentStatus(a);
+            }
+            resp.success(a);
+        }
     }
 
     public static class RequestOfToolAgentDetailsGet {

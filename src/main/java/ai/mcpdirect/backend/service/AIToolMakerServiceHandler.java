@@ -60,44 +60,31 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     public static class RequestOfModifyToolMaker{
-        public long id;
+        public long makerId;
         public String name;
         public String tags;
         public Integer status;
     }
-    @ServiceRequestMapping("status/modify")
+    @ServiceRequestMapping("modify")
     public void modifyToolMaker(
             ServiceRequest request,
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfModifyToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
     ){
-        if(req.id>0&&req.status!=null&&toolMapper.updateToolMakerStatus(req.id,req.status)>0) {
-            resp.success(toolMapper.selectToolMakerById(req.id));
-        }
-    }
-
-    @ServiceRequestMapping("name/modify")
-    public void modifyToolMakerName(
-            ServiceRequest request,
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfModifyToolMaker req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
-    ){
-        if(req.id>0&&req.status!=null&&toolMapper.updateToolMakerName(req.id,req.name)>0) {
-            resp.success(toolMapper.selectToolMakerById(req.id));
-        }
-    }
-
-    @ServiceRequestMapping("tags/modify")
-    public void modifyToolMakerTags(
-            ServiceRequest request,
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfModifyToolMaker req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
-    ){
-        if(req.id>0&&req.tags!=null&&toolMapper.updateToolMakerTags(req.id,req.tags)>0) {
-            resp.success(toolMapper.selectToolMakerById(req.id));
+        AIPortToolMaker maker;
+        if(req.makerId>0&&(maker=toolMapper.selectToolMakerById(req.makerId))!=null
+                &&maker.userId==account.id) {
+            if(req.status!=null){
+                toolMapper.updateToolMakerStatus(req.makerId,req.status);
+            }
+            if(req.name!=null&&!(req.name=req.name.trim()).isEmpty()){
+                toolMapper.updateToolMakerName(req.makerId,req.name);
+            }
+            if(req.tags!=null&&!(req.tags=req.tags.trim()).isEmpty()){
+                toolMapper.updateToolMakerTags(req.makerId,req.tags);
+            }
+            resp.success(toolMapper.selectToolMakerById(req.makerId));
         }
     }
 

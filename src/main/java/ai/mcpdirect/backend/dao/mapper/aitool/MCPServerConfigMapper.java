@@ -9,10 +9,10 @@ import java.util.List;
 public interface MCPServerConfigMapper {
 
     String TABLE_NAME = "aitool.mcp_server_config";
-    String SELECT_FIELDS = "id, created, url, command, args, env";
+    String SELECT_FIELDS = "id, created, type,url, command, args, env";
 
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, url, command, args, env) " +
-            "VALUES (#{id}, #{created}, #{url}, #{command}, #{args}, #{env})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, type,url, command, args, env) " +
+            "VALUES (#{id}, #{created}, #{type},#{url}, #{command}, #{args}, #{env})")
     int insertMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
     @Update("UPDATE " + TABLE_NAME + " SET created = #{created}, url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
