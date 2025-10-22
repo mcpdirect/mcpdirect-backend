@@ -20,6 +20,9 @@
 - Added AIPortToolPermission entity based on aitool.sql schema
 - Included public fields and primitive types in generated entities
 
+### Removed
+- Removed standalone entity files as they are now integrated with existing entity structure
+
 ## [Unreleased] - 2025-10-14
 
 ### Added
