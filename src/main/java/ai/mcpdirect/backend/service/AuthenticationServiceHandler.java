@@ -44,7 +44,7 @@ public class AuthenticationServiceHandler {
                 resp.message = "invalid account";
             } else if (accountMapper.checkUserAccount(req.account)>0) {
                 resp.message = "account existed";
-                resp.code = AIPortAccount.ACCOUNT_EXISTED;
+                resp.code = AccountServiceErrors.ACCOUNT_EXISTED;
             } else {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
@@ -61,6 +61,7 @@ public class AuthenticationServiceHandler {
                             account.id = ID.nextId();
                             account.password = "";
                             account.status = 1;
+                            account.keySeed = AIPortAccessKeyGenerator.generateRandomKey();
 
                             if (req.userInfo == null) {
                                 req.userInfo = new AIPortUser();
@@ -138,7 +139,7 @@ public class AuthenticationServiceHandler {
                 resp.message = "invalid account";
             } else if ((account=accountMapper.selectUserAccount(req.account))==null) {
                 resp.message = "account not existed";
-                resp.code = AIPortAccount.ACCOUNT_NOT_EXIST;
+                resp.code = AccountServiceErrors.ACCOUNT_NOT_EXIST;
             } else {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
@@ -224,8 +225,7 @@ public class AuthenticationServiceHandler {
             @ServiceResponseMessage SimpleServiceResponseMessage<AccountDetails> resp) throws Exception {
         int userDevice = aiportDevice!=null?aiportDevice.hashCode():0;
         if (req.account == null) {
-            resp.code = AIPortAccount.SIGN_IN_FAILED;
-            resp.message = "invalid account info";
+            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
             return;
         }
         resp.data = new AccountDetails();
@@ -253,7 +253,7 @@ public class AuthenticationServiceHandler {
             }
         }
         if (resp.data.accessToken == null) {
-            resp.code = AIPortAccount.SIGN_IN_FAILED;
+            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
         }
     }
 
@@ -269,7 +269,7 @@ public class AuthenticationServiceHandler {
             @ServiceResponseMessage SimpleServiceResponseMessage<AccountDetails> resp) throws Exception {
         int userDevice = aiportDevice!=null?aiportDevice.hashCode():0;
         if (req.id == 0) {
-            resp.code = AIPortAccount.SIGN_IN_FAILED;
+            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
             resp.message = "invalid account info";
             return;
         }
@@ -298,7 +298,7 @@ public class AuthenticationServiceHandler {
             }
         }
         if (resp.data.accessToken == null) {
-            resp.code = AIPortAccount.SIGN_IN_FAILED;
+            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
         }
     }
 

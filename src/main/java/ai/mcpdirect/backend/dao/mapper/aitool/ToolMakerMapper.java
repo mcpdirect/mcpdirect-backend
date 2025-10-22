@@ -76,20 +76,23 @@ public interface ToolMakerMapper {
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
             ",ta.status agentStatus,ta.name agentName FROM " + TABLE_JOIN_NAME + "\n" +
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
-            "WHERE ta.user_id = #{userId}\n" +
+            "WHERE ta.user_id = #{userId} and tm.last_updated>#{lastUpdated}\n" +
             "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
             "<if test=\"type!=null\">and tm.type=#{type}</if>" +
             "<if test=\"name!=null\">and LOWER(tm.name) LIKE CONCAT('%', #{name}, '%')</if>" +
             "</script>")
-    List<AIPortToolMaker> selectToolMakerByUserId(@Param("userId") long userId,@Param("name")String name,
-                                                  @Param("type") Integer type,@Param("agentId")Long agentId);
+    List<AIPortToolMaker> selectToolMakersByUserId(@Param("userId") long userId, @Param("name")String name,
+                                                   @Param("type") Integer type, @Param("agentId")Long agentId,
+                                                   @Param("lastUpdated")long lastUpdated);
 
 
 
     @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
-            " WHERE agent_id = #{userId} and type=0\n" +
+            " WHERE agent_id = #{userId} and type=0 and last_updated>#{lastUpdated}\n" +
             "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
-    List<AIPortToolMaker> selectVirtualToolMakerByUserId(@Param("userId") long userId,@Param("name")String name);
+    List<AIPortToolMaker> selectVirtualToolMakerByUserId(
+            @Param("userId") long userId,@Param("name")String name,@Param("lastUpdated")long lastUpdated
+    );
 
     @Select("<script>SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +"\n"+ """
                                 WHERE agent_id IN
@@ -106,14 +109,16 @@ public interface ToolMakerMapper {
     List<AIPortToolMaker> selectToolMakerByIds(@Param("makerIds") List<Long> makerIds);
     @Select("SELECT " + SELECT_JOIN_FIELDS +",ttm.team_id teamId\n" +
             "FROM "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm\n" +
-            "LEFT JOIN "+TABLE_JOIN_NAME+" on tm.id=ttm.tool_maker_id\n" +
+            "LEFT JOIN "+TABLE_JOIN_NAME+" on tm.id=ttm.tool_maker_id and tm.last_updated>#{lastUpdated}\n" +
             "WHERE ttm.team_id=#{teamId}")
-    List<AIPortToolMaker> selectToolMakersByTeamId(@Param("teamId") long teamId);
+    List<AIPortToolMaker> selectToolMakersByTeamId(@Param("teamId") long teamId,
+                                                   @Param("lastUpdated")long lastUpdated);
 
     @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
             "FROM "+TeamMapper.teamMemberTable+" atm\n" +
             "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
-            "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id\n" +
+            "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
             "WHERE atm.member_id=#{userId}")
-    List<AIPortToolMaker> selectToolMakersByUserId(@Param("userId") long userId);
+    List<AIPortToolMaker> selectToolMakersByTeamMemberId(@Param("userId") long userId,
+                                                         @Param("lastUpdated")long lastUpdated);
 }

@@ -47,7 +47,7 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper,TeamMapper{
     @Update("update "+userAccountTable+" set password=#{password} where id=#{id}")
     void updateUserAccountPassword(@Param("id") long id, @Param("password") String newPassword);
 
-    @Insert("INSERT INTO "+userAccountTable+" (id,account, password,status)\n" +
+    @Insert("INSERT INTO "+userAccountTable+" (id,account, password,status,key_seed)\n" +
             "VALUES(#{id}, #{account}, #{password},#{status},#{keySeed});")
     void insertUserAccountCredential(AIPortAccountCredential account);
 

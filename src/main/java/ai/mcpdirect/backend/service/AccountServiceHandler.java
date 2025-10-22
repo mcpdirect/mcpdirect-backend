@@ -133,6 +133,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
     @ServiceRequestMapping("logout")
     public void logout(
             ServiceRequest request,
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceResponseMessage SimpleServiceResponseMessage<Boolean> resp) throws Exception {
         String hstpAuth = request.getRequestHeaders().getHeader("hstp-auth");
         if(hstpAuth==null) return;
@@ -174,13 +175,13 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         if (credentials != null) {
             String password = credentials.password.toLowerCase();
             if (!checkHash(req.secretKey, password, Long.toString(req.timestamp))) {
-                resp.code = AIPortAccount.PASSWORD_INCORRECT;
+                resp.code = AccountServiceErrors.PASSWORD_INCORRECT;
                 return;
             }
             accountMapper.updateUserAccountPassword(account.id, req.password);
             resp.success(true);
         }else{
-            resp.code = AIPortAccount.ACCOUNT_NOT_EXIST;
+            resp.code = AccountServiceErrors.ACCOUNT_NOT_EXIST;
         }
     }
 
@@ -395,7 +396,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         if(req.account!=null&&req.teamId>0) {
             AIPortUser u = accountMapper.selectUserByAccount(req.account);
             if(u==null){
-                resp.code = USER_NOT_EXIST;
+                resp.code = ACCOUNT_NOT_EXIST;
             }else if(u.id!=account.id){
                 AIPortTeam t = accountMapper.selectTeamById(req.teamId);
                 if(t==null){

@@ -6,7 +6,7 @@ public class AIPortMCPServerConfig {
     public long id;
     
     public long created;
-    public int type;
+    public int transport;
     public String url;
     public String command;
     public String args;

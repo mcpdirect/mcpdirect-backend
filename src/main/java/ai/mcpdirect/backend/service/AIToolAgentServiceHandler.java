@@ -60,12 +60,12 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                             tool.makerStatus = m.status;
                             AIPortTool old = toolMapper.selectToolByName(tool.name);
                             if (old == null) {
+                                tool.id = ID.nextId();
                                 tool.makerId = m.id;
                                 tool.status = 1;
                                 tool.lastUpdated = now;
-                                if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty()||
-                                        !tool.tags.startsWith("[")||!tool.tags.endsWith("]"))
-                                    tool.tags="[]";
+                                if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty())
+                                    tool.tags="";
                                 toolMapper.insertTool(tool);
                             } else if (old.hash != tool.hash) {
                                 tool.id = old.id;
@@ -75,6 +75,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                         }
 
                     } catch (Exception e) {
+                        LOG.warn("updateToolMetaData()",e);
                     }
                     toolsUpdated = true;
                 }

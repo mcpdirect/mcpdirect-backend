@@ -6,6 +6,13 @@
 - Generated entity classes from SQL schema files in sql/ directory
 - Added AIPortAccount entity based on account.sql schema
 - Added AIPortAITool entity based on aitool.sql schema
+- Added AIPortToolAgent entity based on aitool.sql schema
+- Added AIPortToolMaker entity based on aitool.sql schema
+- Added AIPortAccessKey entity based on account.sql schema
+- Added AIPortUser entity based on account.sql schema
+- Added AIPortTeam entity based on account.sql schema
+- Added AIPortTeamMember entity based on account.sql schema
+- Added AIPortToolPermission entity based on aitool.sql schema
 - Included public fields and primitive types in generated entities
 
 ## [Unreleased] - 2025-10-14

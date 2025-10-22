@@ -37,6 +37,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         public String name;
         public int type;
         public String tags;
+        public AIPortMCPServerConfig mcpServerConfig;
     }
     @ServiceRequestMapping("create")
     public void createToolMaker(
@@ -51,11 +52,25 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         maker.name = req.name;
         maker.type = req.type;
         maker.tags = req.tags;
-        maker.agentId = req.type == 0 ? account.id : Long.parseLong(request.getRequestEngineId());
+        if(req.type != AIPortToolMaker.TYPE_VIRTUAL) {
+            if(req.type == AIPortToolMaker.TYPE_MCP&&req.mcpServerConfig==null){
+                return;
+            }
+            AIPortToolAgent agent = toolMapper.selectToolAgentByEngineId(account.id, request.getRequestEngineId());
+            if(agent==null){
+                return;
+            }
+            maker.agentId = agent.id;
+        }
         maker.status = 1;
         maker.created = System.currentTimeMillis();
         maker.lastUpdated = maker.created;
         toolMapper.insertToolMaker(maker);
+        if(req.type==AIPortToolMaker.TYPE_MCP){
+            req.mcpServerConfig.id = maker.id;
+            req.mcpServerConfig.created = System.currentTimeMillis();
+            toolMapper.insertMCPServerConfig(req.mcpServerConfig);
+        }
         resp.success(maker);
     }
 
@@ -99,6 +114,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         public String name;
         public Long toolAgentId;
         public Long teamId;
+        public long lastUpdated;
     }
     @ServiceRequestMapping("query")
     public void queryToolMakers(
@@ -111,18 +127,19 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         }
         List<AIPortToolMaker> list = new ArrayList<>();
         if(req.type==null||req.type==0){
-            list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name));
+            list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name,req.lastUpdated));
         }
         if(req.type==null||req.type>0){
             if(req.type!=null&&req.type==Integer.MAX_VALUE){
                 req.type = null;
             }
-            list.addAll(toolMapper.selectToolMakerByUserId(account.id,req.name,req.type,req.toolAgentId));
+            list.addAll(toolMapper.selectToolMakersByUserId(account.id,req.name,req.type,
+                    req.toolAgentId,req.lastUpdated));
         }
         if(req.teamId!=null){
-            list.addAll(toolMapper.selectToolMakersByTeamId(req.teamId));
+            list.addAll(toolMapper.selectToolMakersByTeamId(req.teamId,req.lastUpdated));
         }else{
-            list.addAll(toolMapper.selectToolMakersByUserId(account.id));
+            list.addAll(toolMapper.selectToolMakersByTeamMemberId(account.id,req.lastUpdated));
         }
         resp.success(list);
     }

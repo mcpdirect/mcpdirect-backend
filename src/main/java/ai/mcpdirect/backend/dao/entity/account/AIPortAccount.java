@@ -1,12 +1,6 @@
 package ai.mcpdirect.backend.dao.entity.account;
 
 public class AIPortAccount {
-    public static final int ACCOUNT_NOT_EXIST = 0x10000;
-    public static final int ACCOUNT_EXISTED = 0x10001;
-
-    public static final int PASSWORD_INCORRECT = 0x10100;
-
-    public static final int SIGN_IN_FAILED = 0x10200;
     public static final int PASSWORD = 0;
     public static final int ACCESS_KEY = 1;
     public static final int ECC_SIGNATURE = 2;
