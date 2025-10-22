@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] - 2025-10-20
+
+### Added
+- Generated entity classes from SQL schema files in sql/ directory
+- Added AIPortAccount entity based on account.sql schema
+- Added AIPortAITool entity based on aitool.sql schema
+- Included public fields and primitive types in generated entities
+
 ## [Unreleased] - 2025-10-14
 
 ### Added
