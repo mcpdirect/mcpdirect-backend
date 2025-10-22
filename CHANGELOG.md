@@ -2,6 +2,11 @@
 
 ## [Unreleased] - 2025-10-20
 
+### Fixed
+- Updated AIToolMapper to include makerId parameter when querying tools by name for better precision
+- Modified AIToolAgentServiceHandler to properly handle tool creation with makerId parameter
+- Ensured proper tool selection by both makerId and name in service handler
+
 ### Added
 - Generated entity classes from SQL schema files in sql/ directory
 - Added AIPortAccount entity based on account.sql schema

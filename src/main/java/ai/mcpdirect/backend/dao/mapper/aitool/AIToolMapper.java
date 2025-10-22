@@ -41,8 +41,8 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
 
     @Select("SELECT " + SELECT_FIELDS + ",meta_data metaData FROM " + TABLE_NAME + " WHERE id = #{id}")
     AIPortTool selectToolById(long id);
-    @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE name = #{name}")
-    AIPortTool selectToolByName(String name);
+    @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE maker_id=#{makerId} AND name = #{name}")
+    AIPortTool selectToolByName(@Param("makerId")long makerId,@Param("name") String name);
 
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE maker_id = #{makerId}")
     List<AIPortTool> selectToolsByMakerId(long makerId);

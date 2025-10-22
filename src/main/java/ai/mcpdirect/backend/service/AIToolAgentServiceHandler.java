@@ -48,17 +48,16 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
         if(req.maker.agentId>0
                 && (agent = toolMapper.selectToolAgentById(req.maker.agentId))!=null
                 && agent.userId==account.id){
-            AIPortToolMaker m ;
+            AIPortToolMaker m = null;
             boolean toolsUpdated = false;
             long now = System.currentTimeMillis();
             if(req.maker.id>0){
-                m = toolMapper.selectToolMakerById(req.maker.id);
-                if(m!=null&&req.tools!=null) {
+                if(req.tools!=null&&!req.tools.isEmpty()&&(m=toolMapper.selectToolMakerById(req.maker.id))!=null) {
                     try {
                         for (AIPortTool tool : req.tools) {
                             tool.agentStatus = agent.status;
                             tool.makerStatus = m.status;
-                            AIPortTool old = toolMapper.selectToolByName(tool.name);
+                            AIPortTool old = toolMapper.selectToolByName(req.maker.id,tool.name);
                             if (old == null) {
                                 tool.id = ID.nextId();
                                 tool.makerId = m.id;
