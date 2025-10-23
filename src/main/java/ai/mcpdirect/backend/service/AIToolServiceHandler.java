@@ -47,7 +47,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
     public void grantToolPermission(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfGrantToolPermission req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermission>> resp
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermissionMakerSummary>> resp
     ) throws Exception {
         long now = System.currentTimeMillis();
 //            List<Integer> keyList = permissions.stream().map(p -> p.accessKeyId).toList();
@@ -90,8 +90,12 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             }
             return true;
         });
-        req.permissions.addAll(req.virtualPermissions);
-        resp.success(req.permissions);
+//        req.permissions.addAll(req.virtualPermissions);
+//        resp.success(req.permissions);
+        List<AIPortToolPermissionMakerSummary> summaries = new ArrayList<>();
+        summaries.addAll(toolMapper.selectToolPermissionMakerSummary(account.id));
+        summaries.addAll(toolMapper.selectVirtualToolPermissionMakerSummary(account.id));
+        resp.success(summaries);
         try {
             engine.broadcast(
                     publishBroadcastUSL,

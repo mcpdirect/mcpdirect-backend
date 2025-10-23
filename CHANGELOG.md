@@ -6,6 +6,10 @@
 - Updated AIToolMapper to include makerId parameter when querying tools by name for better precision
 - Modified AIToolAgentServiceHandler to properly handle tool creation with makerId parameter
 - Ensured proper tool selection by both makerId and name in service handler
+- Corrected tool creation in AIToolAgentServiceHandler to use req.maker.id instead of m.id
+- Set proper agent status and ID when creating new tools
+- Updated AIToolServiceHandler to use AIPortToolPermissionMakerSummary in grantToolPermission response
+- Modified grantToolPermission method to return tool permission maker summaries from both regular and virtual permissions
 
 ### Added
 - Generated entity classes from SQL schema files in sql/ directory

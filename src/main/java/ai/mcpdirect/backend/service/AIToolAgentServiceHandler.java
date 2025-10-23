@@ -60,9 +60,12 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                             AIPortTool old = toolMapper.selectToolByName(req.maker.id,tool.name);
                             if (old == null) {
                                 tool.id = ID.nextId();
-                                tool.makerId = m.id;
-                                tool.status = 1;
+                                tool.makerId = req.maker.id;
+                                tool.makerStatus = 1;
+                                tool.agentId = agent.id;
+                                tool.agentStatus = agent.status;
                                 tool.lastUpdated = now;
+                                tool.status = 1;
                                 if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty())
                                     tool.tags="";
                                 toolMapper.insertTool(tool);
