@@ -8,6 +8,8 @@ import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 
 import static ai.mcpdirect.backend.dao.entity.AIPortSystemProperty.*;
+import static ai.mcpdirect.backend.service.AccountServiceErrors.OTP_EXPIRED;
+import static ai.mcpdirect.backend.service.AccountServiceErrors.OTP_FAILED;
 
 import appnet.hstp.ServiceEngine;
 import appnet.hstp.SimpleServiceResponseMessage;
@@ -49,6 +51,7 @@ public class AuthenticationServiceHandler {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
                 if (req.otp != null) {
+                    resp.code = OTP_EXPIRED;
                     resp.data.id = -1;
                     AIPortOtp aiOtp = accountMapper.selectOtp(req.otpId);
                     if (aiOtp != null && aiOtp.expirationDate > System.currentTimeMillis()
@@ -83,9 +86,11 @@ public class AuthenticationServiceHandler {
 
                             return req.otpId;
                         }));
+                        resp.success();
                         // resp.data.expirationDate = aiOtp.expirationDate;
                     }
                 } else {
+                    resp.code = OTP_FAILED;
                     resp.data.id = -2;
                     AIPortOtp otp = AIPortOtp.createOtp(ID.nextId());
                     otp.account = req.account;
@@ -115,9 +120,9 @@ public class AuthenticationServiceHandler {
 
                         resp.data.id = otp.id;
                         resp.data.expirationDate = otp.expirationDate;
+                        resp.success();
                     }
                 }
-                resp.success();
             }
         } catch (Exception e) {
             resp.message = e.toString();
@@ -144,12 +149,14 @@ public class AuthenticationServiceHandler {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
                 if (req.otp != null) {
+                    resp.code = OTP_EXPIRED;
                     resp.data.id = -1;
                     AIPortOtp aiOtp = accountMapper.selectOtp(req.otpId);
                     if (aiOtp != null && aiOtp.expirationDate > System.currentTimeMillis()
                             && aiOtp.otp.equals(req.otp)) {
                         accountMapper.updateUserAccountPassword(account.id, req.password);
                         resp.data.id = req.otpId;
+                        resp.success();
 //                        resp.data.id = helper.executeSql((sqlSession -> {
 //                            AccountMapper mapper = sqlSession.getMapper(AccountMapper.class);
 //                            mapper.updateUserAccountPassword(account.id, req.password);
@@ -158,6 +165,7 @@ public class AuthenticationServiceHandler {
                         // resp.data.expirationDate = aiOtp.expirationDate;
                     }
                 } else {
+                    resp.code = OTP_FAILED;
                     resp.data.id = -2;
                     AIPortOtp otp = AIPortOtp.createOtp(ID.nextId());
                     otp.account = req.account;
@@ -182,9 +190,9 @@ public class AuthenticationServiceHandler {
 
                         resp.data.id = otp.id;
                         resp.data.expirationDate = otp.expirationDate;
+                        resp.success();
                     }
                 }
-                resp.success();
             }
         } catch (Exception e) {
             resp.message = e.toString();

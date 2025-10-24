@@ -10,6 +10,9 @@
 - Set proper agent status and ID when creating new tools
 - Updated AIToolServiceHandler to use AIPortToolPermissionMakerSummary in grantToolPermission response
 - Modified grantToolPermission method to return tool permission maker summaries from both regular and virtual permissions
+- Added new error codes for account and OTP handling in AccountServiceErrors
+- Updated AuthenticationServiceHandler to properly handle OTP expiration and failure cases
+- Set appropriate response codes for OTP operations in authentication service
 
 ### Added
 - Generated entity classes from SQL schema files in sql/ directory
