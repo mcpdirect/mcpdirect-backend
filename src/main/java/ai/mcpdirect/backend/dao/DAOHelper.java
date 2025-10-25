@@ -82,9 +82,17 @@ public abstract class DAOHelper<P extends AIPortSystemProperty,M extends AIPortS
     public AIPortSystemProperty getSystemProperty(String key){
         return praProperties.get(key);
     }
+    public String getSystemPropertyValue(String key){
+        AIPortSystemProperty property = praProperties.get(key);
+        return property==null?null:property.value;
+    }
+    public String getSystemPropertyValue(String key,String defaultValue){
+        AIPortSystemProperty property = praProperties.get(key);
+        return property==null?defaultValue:property.value;
+    }
 
     public interface PropertyValueConvertor<T>{
-        T convert(Object o) throws Exception;
+        T convert(String o) throws Exception;
     }
     private final ConcurrentHashMap<String,Object> properties = new ConcurrentHashMap<>();
 
@@ -98,23 +106,26 @@ public abstract class DAOHelper<P extends AIPortSystemProperty,M extends AIPortS
         }
         if (i == null) {
             try {
-                i = convertor.convert(getSystemProperty(key).value);
-                properties.put(key, i);
+                String v = getSystemPropertyValue(key);
+                if(v!=null) {
+                    i = convertor.convert(v);
+                    properties.put(key, i);
+                }
             }catch (Exception ignore){}
         }
         return i!=null?i:defaultValue;
     }
     public int getIntSystemProperty(String key,int defaultValue){
-        return getSystemProperty(key,o-> Integer.parseInt(getSystemProperty(key).value),defaultValue);
+        return getSystemProperty(key, Integer::parseInt,defaultValue);
     }
     public long getLongSystemProperty(String key,long defaultValue){
-        return getSystemProperty(key,o-> Long.parseLong(getSystemProperty(key).value),defaultValue);
+        return getSystemProperty(key, Long::parseLong,defaultValue);
     }
     public String getStringSystemProperty(String key){
-        return getSystemProperty(key).value;
+        return getSystemPropertyValue(key);
     }
     public <T> T getObjectSystemProperty(String key,Class<T> type){
-        return getSystemProperty(key, o-> JSON.fromJson(getSystemProperty(key).value,type),null);
+        return getSystemProperty(key, v-> JSON.fromJson(v,type),null);
     }
 
     public void setSystemProperty(P req){

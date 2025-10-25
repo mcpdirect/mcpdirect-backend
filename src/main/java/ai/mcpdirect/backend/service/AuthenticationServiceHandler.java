@@ -101,18 +101,24 @@ public class AuthenticationServiceHandler {
                             Mail.Setting.class);
 
                     if (supportEmail != null) {
-                        String lang = req.userInfo==null||req.userInfo.language==null?"en-US":req.userInfo.language;
+                        String defLang = helper.getSystemPropertyValue(AIPORT_DEFAULT_LANGUAGE,"en-US");
+                        String lang = req.userInfo==null||req.userInfo.language==null?defLang:req.userInfo.language;
                         String content = helper.getStringSystemProperty(
                             OTP_EMAIL_TEMPLATE+"_"+lang);
                         if(content==null){
                             content = helper.getStringSystemProperty(
-                                    OTP_EMAIL_TEMPLATE+"_en-US");
+                                    OTP_EMAIL_TEMPLATE+"_"+defLang);
                         }
                         content = content.replace("${otp}", otp.otp)
                                 .replace("${duration}",String.valueOf(otpDuration / 60000))
                                 .replace("${detail}","");
                         String subject = helper.getStringSystemProperty(
-                            OTP_EMAIL_SUBJECT_TEMPLATE+"_"+req.userInfo.language);
+                            OTP_EMAIL_SUBJECT_TEMPLATE+"_"+lang);
+                        if(subject==null){
+                            subject = helper.getStringSystemProperty(
+                                    OTP_EMAIL_SUBJECT_TEMPLATE+"_"+defLang);
+                        }
+
                         subject = subject.replace("${otp}", otp.otp);
 
                         Mail mail = Mail.create(supportEmail, subject, content, req.account);
@@ -176,13 +182,24 @@ public class AuthenticationServiceHandler {
                             Mail.Setting.class);
 
                     if (supportEmail != null) {
+                        String defLang = helper.getSystemPropertyValue(AIPORT_DEFAULT_LANGUAGE,"en-US");
+                        String lang = req.userInfo==null||req.userInfo.language==null?defLang:req.userInfo.language;
+
                         String content = helper.getStringSystemProperty(
-                            OTP_EMAIL_TEMPLATE+"_"+req.userInfo.language);
+                            OTP_EMAIL_TEMPLATE+"_"+lang);
+                        if(content==null){
+                            content = helper.getStringSystemProperty(
+                                    OTP_EMAIL_TEMPLATE+"_"+defLang);
+                        }
                         content = content.replace("${otp}", otp.otp)
                                 .replace("${duration}",String.valueOf(otpDuration / 60000))
                                 .replace("${detail}","");
                         String subject = helper.getStringSystemProperty(
-                            OTP_EMAIL_SUBJECT_TEMPLATE+"_"+req.userInfo.language);
+                            OTP_EMAIL_SUBJECT_TEMPLATE+"_"+lang);
+                        if(subject==null){
+                            subject = helper.getStringSystemProperty(
+                                    OTP_EMAIL_SUBJECT_TEMPLATE+"_"+defLang);
+                        }
                         subject = subject.replace("${otp}", otp.otp);
 
                         Mail mail = Mail.create(supportEmail, subject, content, req.account);

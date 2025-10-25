@@ -17,7 +17,8 @@ public class AIPortSystemProperty {
     public static final String STAGING_FORGOT_PSD_EMAIL_TEMPLATE = "stagingForgotPsdEmailTemplate";
     public static final String STAGING_FORGOT_PSD_EMAIL_SUBJECT = "stagingForgotPsdEmailSubject";
 
-    public static final String AIPORT_SUPPORT_EMAIL = "aiportSupportEmail";    
+    public static final String AIPORT_SUPPORT_EMAIL = "aiportSupportEmail";
+    public static final String AIPORT_DEFAULT_LANGUAGE = "aiportDefaultLanguage";
     public String key;
     public long archived;
     public long created;

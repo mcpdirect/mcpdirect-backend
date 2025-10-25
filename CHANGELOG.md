@@ -13,6 +13,11 @@
 - Added new error codes for account and OTP handling in AccountServiceErrors
 - Updated AuthenticationServiceHandler to properly handle OTP expiration and failure cases
 - Set appropriate response codes for OTP operations in authentication service
+- Enhanced DAOHelper with improved system property value retrieval methods
+- Modified PropertyValueConvertor interface to accept String instead of Object
+- Fixed system property retrieval in DAOHelper to handle null values properly
+- Added AIPORT_DEFAULT_LANGUAGE system property for default language handling
+- Updated AuthenticationServiceHandler to use default language for OTP emails when user language is not available
 
 ### Added
 - Generated entity classes from SQL schema files in sql/ directory
