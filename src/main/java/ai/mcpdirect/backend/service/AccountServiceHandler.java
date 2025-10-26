@@ -205,11 +205,12 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             AIPortAccessKeyCredential key = new AIPortAccessKeyCredential(
                     AIPortAccessKeyValidator.hashCode(secretKey),
                     account.id, Integer.MAX_VALUE, req.name,
-                    AIPortAccessKeyGenerator.generateRandomKey(),
+//                    AIPortAccessKeyGenerator.generateRandomKey(),
+                    secretKey,
                     1, now, Long.MAX_VALUE,
                     now);
             accountMapper.insertAccessKeyCredential(key);
-            key.secretKey = secretKey;
+//            key.secretKey = secretKey;
             resp.success(key);
         }
     }
@@ -252,7 +253,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
     }
 
     public static class RequestOfQueryAccessKey {
-        public Integer keyId;
+        public Long keyId;
     }
 
     @ServiceRequestMapping("access_key/query")
@@ -265,6 +266,16 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         }else{
             AIPortAccessKey accessKey = accountMapper.selectAccessKeyById(account.id, req.keyId);
             resp.success(accessKey==null?List.of():List.of(accessKey));
+        }
+    }
+
+    @ServiceRequestMapping("access_key/credential/get")
+    public void getAccessKeyCredential(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryAccessKey req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortAccessKeyCredential> resp){
+        if(req.keyId!=null&&req.keyId>0) {
+            resp.success(accountMapper.selectAccessKeyCredentialById(req.keyId));
         }
     }
 

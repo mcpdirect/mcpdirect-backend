@@ -45,5 +45,7 @@ public class MCPdirectBackendApplication implements CommandLineRunner {
         KeyValueCacheFactory.setInstance(new KeyValueCacheRedis(
             host,port,redisPassword
         ));
+
+        LOG.info("MCPdirectBackendApplication started");
     }
 }

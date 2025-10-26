@@ -1,9 +1,6 @@
 package ai.mcpdirect.backend.dao.mapper.aitool;
 
-import ai.mcpdirect.backend.dao.entity.aitool.AIPortTool;
-import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolPermission;
-import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolPermissionMakerSummary;
-import ai.mcpdirect.backend.dao.entity.aitool.AIPortVirtualToolPermission;
+import ai.mcpdirect.backend.dao.entity.aitool.*;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -21,7 +18,7 @@ public interface ToolPermissionMapper {
     String SELECT_FIELDS_V = "user_id userId, access_key_id accessKeyId, tool_id toolId, original_tool_id originalToolId, last_updated lastUpdated, status";
     String SELECT_JOIN_FIELDS_V = "tp.user_id userId, tp.access_key_id accessKeyId, tp.tool_id toolId,tp.original_tool_id originalToolId, tp.last_updated lastUpdated, tp.status";
 
-    String SELECT_TOOL_FIELDS = "t.name,t.agent_id agentId,t.maker_id makerId,t.tags,t.meta_data metaData";
+    String SELECT_TOOL_FIELDS = "t.id,t.name,t.agent_id agentId,t.maker_id makerId,t.tags,t.meta_data metaData";
 
     @Insert("INSERT INTO " + TABLE_NAME + " (user_id, access_key_id, tool_id, last_updated, status) " +
             "VALUES (#{userId}, #{accessKeyId}, #{toolId}, #{lastUpdated}, #{status})")

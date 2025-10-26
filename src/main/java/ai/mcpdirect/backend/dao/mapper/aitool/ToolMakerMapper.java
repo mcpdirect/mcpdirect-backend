@@ -76,7 +76,7 @@ public interface ToolMakerMapper {
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
             ",ta.status agentStatus,ta.name agentName FROM " + TABLE_JOIN_NAME + "\n" +
             "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
-            "WHERE ta.user_id = #{userId} and tm.last_updated>#{lastUpdated}\n" +
+            "WHERE tm.user_id = #{userId} and tm.last_updated>#{lastUpdated}\n" +
             "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
             "<if test=\"type!=null\">and tm.type=#{type}</if>" +
             "<if test=\"name!=null\">and LOWER(tm.name) LIKE CONCAT('%', #{name}, '%')</if>" +
@@ -87,12 +87,12 @@ public interface ToolMakerMapper {
 
 
 
-    @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
-            " WHERE agent_id = #{userId} and type=0 and last_updated>#{lastUpdated}\n" +
-            "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
-    List<AIPortToolMaker> selectVirtualToolMakerByUserId(
-            @Param("userId") long userId,@Param("name")String name,@Param("lastUpdated")long lastUpdated
-    );
+//    @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
+//            " WHERE user_id = #{userId} and type=0 and last_updated>#{lastUpdated}\n" +
+//            "<if test=\"name!=null\">and LOWER(name) LIKE CONCAT('%', #{name}, '%')</if></script>")
+//    List<AIPortToolMaker> selectVirtualToolMakerByUserId(
+//            @Param("userId") long userId,@Param("name")String name,@Param("lastUpdated")long lastUpdated
+//    );
 
     @Select("<script>SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +"\n"+ """
                                 WHERE agent_id IN

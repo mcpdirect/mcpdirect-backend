@@ -125,17 +125,20 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         if(req.name!=null&&(req.name = req.name.trim()).isEmpty()){
             req.name = null;
         }
-        List<AIPortToolMaker> list = new ArrayList<>();
-        if(req.type==null||req.type==0){
-            list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name,req.lastUpdated));
-        }
-        if(req.type==null||req.type>0){
-            if(req.type!=null&&req.type==Integer.MAX_VALUE){
-                req.type = null;
-            }
-            list.addAll(toolMapper.selectToolMakersByUserId(account.id,req.name,req.type,
-                    req.toolAgentId,req.lastUpdated));
-        }
+//        if(req.type==null||req.type==0){
+//            list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name,req.lastUpdated));
+//        }
+//        if(req.type==null||req.type>0){
+//            if(req.type!=null&&req.type==Integer.MAX_VALUE){
+//                req.type = null;
+//            }
+//            list.addAll(toolMapper.selectToolMakersByUserId(account.id,req.name,req.type,
+//                    req.toolAgentId,req.lastUpdated));
+//        }
+        List<AIPortToolMaker> list = new ArrayList<>(
+                toolMapper.selectToolMakersByUserId(account.id, req.name, req.type,
+                        req.toolAgentId, req.lastUpdated));
+
         if(req.teamId!=null){
             list.addAll(toolMapper.selectToolMakersByTeamId(req.teamId,req.lastUpdated));
         }else{
