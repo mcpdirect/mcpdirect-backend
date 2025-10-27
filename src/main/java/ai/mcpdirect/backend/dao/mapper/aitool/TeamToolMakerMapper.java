@@ -19,7 +19,7 @@ public interface TeamToolMakerMapper {
     @Select(SELECT_FROM_TEAM_TOOL_MAKER_TABLE +"WHERE team_id=#{team_Id}")
     List<AIPortTeamToolMaker> selectTeamToolMakerByTeamId(long teamId);
 
-    @Update("UPDATE "+ TEAM_TOOL_MAKER_TABLE + """
+    @Update("UPDATE "+ TEAM_TOOL_MAKER_TABLE + "\n" +"""
             SET status=#{status},last_updated=#{lastUpdated}
             WHERE tool_maker_id=#{toolMakerId} AND team_id=#{teamId}
             """)
