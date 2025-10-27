@@ -60,6 +60,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                             AIPortTool old = toolMapper.selectToolByName(req.maker.id,tool.name);
                             if (old == null) {
                                 tool.id = ID.nextId();
+                                tool.userId = account.id;
                                 tool.makerId = req.maker.id;
                                 tool.makerStatus = 1;
                                 tool.agentId = agent.id;
@@ -98,6 +99,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                 if(req.tools!=null) try{
                     for (AIPortTool tool : req.tools) {
                         tool.id = ID.nextId();
+                        tool.userId = account.id;
                         tool.makerId = req.maker.id;
                         tool.makerStatus = 1;
                         tool.agentId = agent.id;

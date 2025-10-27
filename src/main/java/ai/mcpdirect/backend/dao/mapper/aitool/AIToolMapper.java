@@ -11,19 +11,24 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
         VirtualToolPermissionMapper, TeamToolMakerMapper {
 
     String TABLE_NAME = "aitool.tool";
-    String SELECT_FIELDS = "id, maker_id makerId, status, last_updated lastUpdated, name, tags, hash,agent_id agentId, agent_status agentStatus, maker_status makerStatus";
+    String SELECT_FIELDS = """
+            id,user_id, maker_id makerId, status,
+            last_updated lastUpdated, name,
+            tags, hash,agent_id agentId,
+            agent_status agentStatus,
+            maker_status makerStatus, usage""";
 
     String TABLE_JOIN_NAME = "aitool.tool t";
     String SELECT_JOIN_FIELDS = """
-            t.id,t.maker_id makerId,
+            t.id,t.user_id,t.maker_id makerId,
             t.status,t.last_updated lastUpdated,
             t.name,t.tags,t.hash,
             t.agent_id agentId,
             t.agent_status agentStatus,
-            t.maker_status makerStatus""";
+            t.maker_status makerStatus,usage""";
 
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, maker_id, status, last_updated, name, tags, hash, meta_data,agent_id,agent_status,maker_status) " +
-            "VALUES (#{id}, #{makerId}, #{status}, #{lastUpdated}, #{name}, #{tags}, #{hash}, #{metaData}," +
+    @Insert("INSERT INTO " + TABLE_NAME + " (id,user_id, maker_id, status, last_updated, name, tags, hash, meta_data,agent_id,agent_status,maker_status) " +
+            "VALUES (#{id},#{userId}, #{makerId}, #{status}, #{lastUpdated}, #{name}, #{tags}, #{hash}, #{metaData}," +
             "#{agentId}, #{agentStatus}, #{makerStatus})")
     int insertTool(AIPortTool tool);
 
@@ -56,14 +61,13 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
 
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS + " FROM " + TABLE_JOIN_NAME +
             " LEFT JOIN " + ToolAgentMapper.TABLE_JOIN_NAME + " ON t.agent_id=ta.id "+ """
-            WHERE
-            <if test="status!=null">t.status=#{status} AND</if>
-            <if test="agentId!=null">t.agent_id=#{agentId} AND</if>
-            <if test="makerId!=null">t.maker_id=#{makerId} AND</if>
-            ta.user_id=#{userId}
+            WHERE t.user_id=#{userId}
+            <if test="status!=null">AND t.status=#{status}</if>
+            <if test="agentId!=null">AND t.agent_id=#{agentId}</if>
+            <if test="makerId!=null">AND t.maker_id=#{makerId}</if>
             <if test="name!=null">AND t.name=#{name}</if>
             </script>""")
-    List<AIPortTool> selectTools(@Param("userId") Long userId,
+    List<AIPortTool> selectTools(@Param("userId") long userId,
                                  @Param("status") Integer status,
                                  @Param("agentId")Long agentId,
                                  @Param("makerId")Long makerId,

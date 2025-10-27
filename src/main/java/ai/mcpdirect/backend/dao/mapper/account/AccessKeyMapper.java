@@ -16,7 +16,7 @@ public interface AccessKeyMapper {
             expiration_date expirationDate,
             user_id userId,
             user_roles userRoles,
-            usage_amount usageAmount,
+            usage usage,
             created FROM
             """+accessKeyTable+"\n";
     String selectAccessKeyCredential = """
@@ -27,7 +27,7 @@ public interface AccessKeyMapper {
             expiration_date expirationDate,
             user_id userId,
             user_roles userRoles,
-            usage_amount usageAmount,
+            usage usage,
             created FROM
             """+accessKeyTable+"\n";
 

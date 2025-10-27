@@ -14,6 +14,8 @@ public class AIPortTool {
     public long agentId;
     public int agentStatus;
     public int makerStatus;
+    public int usage;
+    public long userId;
     public AIPortTool() {}
 
     public AIPortTool(long makerId, int status, long lastUpdated, String name, int hash, String metaData, String tags) {

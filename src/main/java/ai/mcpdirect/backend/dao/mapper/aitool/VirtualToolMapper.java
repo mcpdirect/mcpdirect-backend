@@ -12,12 +12,12 @@ public interface VirtualToolMapper {
     String TABLE_NAME = "aitool.virtual_tool";
     String TABLE_JOIN_NAME = "aitool.virtual_tool vt";
     String SELECT_JOIN_FIELDS = """
-            vt.id,vt.maker_id makerId,vt.status,
+            vt.id,vt.user_id,vt.maker_id makerId,vt.status,
             vt.tool_id toolId,vt.last_updated lastUpdated,
             vt.maker_status makerStatus""";
 
-    @Insert("INSERT INTO "+TABLE_NAME + "(id, maker_id, tool_id, status, tags, maker_status, last_updated)\n" +
-            "VALUES(#{id}, #{makerId}, #{toolId}, #{status}, #{tags}, #{makerStatus}, #{lastUpdated})")
+    @Insert("INSERT INTO "+TABLE_NAME + "(id,user_id, maker_id, tool_id, status, tags, maker_status, last_updated)\n" +
+            "VALUES(#{id},#{userId}, #{makerId}, #{toolId}, #{status}, #{tags}, #{makerStatus}, #{lastUpdated})")
     void insertVirtualTool(AIPortVirtualTool tool);
 
     @Update("UPDATE "+TABLE_NAME+" SET status=#{status},last_updated=#{lastUpdated}" +
@@ -28,13 +28,11 @@ public interface VirtualToolMapper {
             "t.name,t.agent_id agentId," +
             "t.agent_status agentStatus FROM "+TABLE_JOIN_NAME+
             " LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON t.id=vt.tool_id\n"+
-            " WHERE vt.status>-1 AND vt.maker_id=#{makerId}")
+            " WHERE vt.maker_id=#{makerId} AND vt.status>-1")
     List<AIPortVirtualTool> selectVirtualToolByMakerId(@Param("makerId")long makerId);
     @Select("SELECT "+SELECT_JOIN_FIELDS+",CONCAT(vt.tags,',',t.tags) tags," +
-            "t.name,t.agent_id agentId," +
-            "t.agent_status agentStatus FROM "+TABLE_JOIN_NAME+
-            " LEFT JOIN "+ToolMakerMapper.TABLE_JOIN_NAME+" ON tm.id=vt.maker_id\n"+
+            "t.name,t.agent_id agentId,t.agent_status agentStatus FROM "+TABLE_JOIN_NAME+
             " LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON t.id=vt.tool_id\n"+
-            " WHERE vt.status>-1 AND tm.agent_id=#{userId}")
+            " WHERE vt.user_id=#{userId} AND vt.status>-1")
     List<AIPortVirtualTool> selectVirtualTools(@Param("userId")long userId);
 }
