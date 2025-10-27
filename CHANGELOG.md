@@ -8,6 +8,10 @@
 - Enhanced ToolMakerMapper and ToolPermissionMapper with additional methods
 - Updated AccountServiceHandler and AIToolMakerServiceHandler with improved functionality
 - Modified MCPdirectBackendApplication with configuration updates
+- Added AIPortToolLog entity and ToolLogMapper for tool logging functionality
+- Updated AIPortAccessKey and AIPortTool entities with additional fields and methods
+- Enhanced service handlers: AIToolAgentServiceHandler and AIToolServiceHandler with improved functionality
+- Updated mappers: AccessKeyMapper, AIToolMapper, and VirtualToolMapper with additional methods
 
 ### Fixed
 - Corrected various service handler implementations for better error handling
