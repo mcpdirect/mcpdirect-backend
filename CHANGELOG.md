@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased] - 2025-10-25
+
+### Added
+- Added MailTest utility for email functionality testing
+- Updated AIPortVirtualTool entity with additional fields and methods
+- Enhanced ToolMakerMapper and ToolPermissionMapper with additional methods
+- Updated AccountServiceHandler and AIToolMakerServiceHandler with improved functionality
+- Modified MCPdirectBackendApplication with configuration updates
+
+### Fixed
+- Corrected various service handler implementations for better error handling
+- Updated test file MailTest.java with proper email testing functionality
+
 ## [Unreleased] - 2025-10-20
 
 ### Fixed
