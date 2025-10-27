@@ -245,3 +245,40 @@ CREATE TABLE user_anonymous (
 	CONSTRAINT user_anonymous_pk PRIMARY KEY (id),
 	CONSTRAINT user_anonymous_unique UNIQUE (device_id)
 );
+
+-- account.team definition
+
+-- Drop table
+
+-- DROP TABLE team;
+
+CREATE TABLE team (
+	id int8 NOT NULL,
+	"name" varchar(50) NOT NULL,
+	created int8 NOT NULL,
+	owner_id int8 NOT NULL,
+	CONSTRAINT team_pk PRIMARY KEY (id)
+);
+CREATE INDEX team_created_idx ON team (created);
+CREATE INDEX team_name_idx ON team ("name");
+CREATE INDEX team_owner_id_idx ON team (owner_id int8_ops);
+
+
+-- account.team_member definition
+
+-- Drop table
+
+-- DROP TABLE team_member;
+
+CREATE TABLE team_member (
+	team_id int8 NOT NULL,
+	member_id int8 NOT NULL,
+	status int2 NOT NULL,
+	created int8 NOT NULL,
+	expiration_date int8 NOT NULL,
+	CONSTRAINT team_member_pk PRIMARY KEY (team_id, member_id)
+);
+CREATE INDEX team_member_created_idx ON account.team_member USING btree (created);
+CREATE INDEX team_member_expiration_date_idx ON account.team_member USING btree (expiration_date);
+CREATE INDEX team_member_member_id_idx ON account.team_member USING btree (member_id);
+CREATE INDEX team_member_status_idx ON account.team_member USING btree (status);

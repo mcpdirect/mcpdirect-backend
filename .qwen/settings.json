@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "dbhub": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@bytebase/dbhub",
+        "--transport",
+        "stdio",
+        "--readonly",
+        "--dsn",
+        "postgres://itunel-sdp-dev:!tuneL_sdp_dev@35.220.172.109:5433/itunel-sdp-db"
+      ]
+    }
+  },
+  "inputs": []
+}
