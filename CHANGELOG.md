@@ -12,6 +12,8 @@
 ### Fixed
 - Corrected various service handler implementations for better error handling
 - Updated test file MailTest.java with proper email testing functionality
+- Fixed SQL update query formatting in TeamToolMakerMapper
+
 
 ## [Unreleased] - 2025-10-20
 
