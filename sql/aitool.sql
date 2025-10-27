@@ -64,9 +64,49 @@ CREATE TABLE mcp_server_config (
 	url varchar NULL,
 	command varchar NULL,
 	args varchar NULL,
-	env varchar NULL
+	env varchar NULL,
+	transport int2 DEFAULT 0 NOT NULL,
+	CONSTRAINT mcp_server_config_pk PRIMARY KEY (id)
 );
 CREATE INDEX mcp_server_config_created_idx ON aitool.mcp_server_config USING btree (created);
+CREATE INDEX mcp_server_config_type_idx ON aitool.mcp_server_config USING btree (transport);
+
+
+-- aitool.mcp_server_config_properties definition
+
+-- Drop table
+
+-- DROP TABLE mcp_server_config_properties;
+
+CREATE TABLE mcp_server_config_properties (
+	mcp_server_config_id int8 NOT NULL,
+	user_id int8 NOT NULL,
+	properties varchar NOT NULL,
+	CONSTRAINT mcp_server_config_properties_pk PRIMARY KEY (mcp_server_config_id, user_id)
+);
+CREATE INDEX mcp_server_config_properties_mcp_server_config_id_idx ON aitool.mcp_server_config_properties USING btree (mcp_server_config_id);
+CREATE INDEX mcp_server_config_properties_user_id_idx ON aitool.mcp_server_config_properties USING btree (user_id);
+
+
+-- aitool.team_tool_maker definition
+
+-- Drop table
+
+-- DROP TABLE team_tool_maker;
+
+CREATE TABLE team_tool_maker (
+	tool_maker_id int8 NOT NULL,
+	team_id int8 NOT NULL,
+	status int2 NOT NULL,
+	created int8 NOT NULL,
+	last_updated int8 NOT NULL,
+	CONSTRAINT team_tool_maker_pk PRIMARY KEY (tool_maker_id, team_id)
+);
+CREATE INDEX team_tool_maker_created_idx ON aitool.team_tool_maker USING btree (created);
+CREATE INDEX team_tool_maker_last_updated_idx ON aitool.team_tool_maker USING btree (last_updated);
+CREATE INDEX team_tool_maker_team_id_idx ON aitool.team_tool_maker USING btree (team_id);
+CREATE INDEX team_tool_maker_team_id_status_idx ON aitool.team_tool_maker USING btree (team_id, status);
+CREATE INDEX team_tool_maker_tool_maker_id_idx ON aitool.team_tool_maker USING btree (tool_maker_id);
 
 
 -- aitool.tool definition
@@ -87,14 +127,18 @@ CREATE TABLE tool (
 	agent_id int8 DEFAULT 0 NOT NULL,
 	agent_status int2 DEFAULT 0 NOT NULL,
 	maker_status int2 DEFAULT 0 NOT NULL,
+	"usage" int4 DEFAULT 0 NOT NULL,
+	user_id int8 DEFAULT 0 NOT NULL,
 	CONSTRAINT tool_pk PRIMARY KEY (id),
 	CONSTRAINT tool_unique UNIQUE (maker_id, name)
 );
 CREATE INDEX tool_agent_id_idx ON aitool.tool USING btree (agent_id);
-CREATE INDEX tool_id_status_idx ON aitool.tool USING btree (id, status, agent_status, maker_status);
 CREATE INDEX tool_last_updated_idx ON aitool.tool USING btree (last_updated);
 CREATE INDEX tool_maker_id_idx ON aitool.tool USING btree (maker_id);
+CREATE INDEX tool_name_idx ON aitool.tool USING btree (name);
+CREATE INDEX tool_status_all_idx ON aitool.tool USING btree (status, agent_status, maker_status);
 CREATE INDEX tool_status_idx ON aitool.tool USING btree (status);
+CREATE INDEX tool_user_id_idx ON aitool.tool USING btree (user_id);
 
 
 -- aitool.tool_agent definition
@@ -141,6 +185,26 @@ CREATE TABLE tool_app (
 );
 
 
+-- aitool.tool_log definition
+
+-- Drop table
+
+-- DROP TABLE tool_log;
+
+CREATE TABLE tool_log (
+	user_id int8 NOT NULL,
+	key_id int8 NOT NULL,
+	tool_id int8 NOT NULL,
+	created int8 NOT NULL
+);
+CREATE INDEX tool_log_created_idx ON aitool.tool_log USING btree (created);
+CREATE INDEX tool_log_key_id_idx ON aitool.tool_log USING btree (key_id);
+CREATE INDEX tool_log_tool_id_idx ON aitool.tool_log USING btree (tool_id);
+CREATE INDEX tool_log_user_id_idx ON aitool.tool_log USING btree (user_id);
+CREATE INDEX tool_log_user_key_id_idx ON aitool.tool_log USING btree (user_id, key_id);
+CREATE INDEX tool_log_user_tool_id_idx ON aitool.tool_log USING btree (user_id, tool_id);
+
+
 -- aitool.tool_maker definition
 
 -- Drop table
@@ -156,17 +220,16 @@ CREATE TABLE tool_maker (
 	tags varchar NULL,
 	agent_id int8 NOT NULL,
 	last_updated int8 NOT NULL,
-	hash int8 DEFAULT 0 NOT NULL,
-	tools varchar DEFAULT '[]'::character varying NOT NULL,
-	CONSTRAINT tools_maker_unique UNIQUE (id)
+	user_id int8 NOT NULL,
+	CONSTRAINT tool_maker_pk PRIMARY KEY (id)
 );
-CREATE INDEX tools_maker_agent_id_created_idx ON aitool.tool_maker USING btree (agent_id, created);
-CREATE INDEX tools_maker_agent_id_idx ON aitool.tool_maker USING btree (agent_id);
-CREATE UNIQUE INDEX tools_maker_agent_id_name_idx ON aitool.tool_maker USING btree (agent_id, name);
-CREATE INDEX tools_maker_agent_id_status_idx ON aitool.tool_maker USING btree (agent_id, status);
-CREATE INDEX tools_maker_agent_id_tyep_idx ON aitool.tool_maker USING btree (agent_id, type);
-CREATE INDEX tools_maker_hash_idx ON aitool.tool_maker USING btree (hash);
-CREATE INDEX tools_maker_last_updated_idx ON aitool.tool_maker USING btree (last_updated);
+CREATE INDEX tool_maker_agent_id_created_idx ON aitool.tool_maker USING btree (agent_id, created);
+CREATE INDEX tool_maker_agent_id_idx ON aitool.tool_maker USING btree (agent_id);
+CREATE UNIQUE INDEX tool_maker_agent_id_name_idx ON aitool.tool_maker USING btree (agent_id, name);
+CREATE INDEX tool_maker_agent_id_status_idx ON aitool.tool_maker USING btree (agent_id, status);
+CREATE INDEX tool_maker_agent_id_type_idx ON aitool.tool_maker USING btree (agent_id, type);
+CREATE INDEX tool_maker_last_updated_idx ON aitool.tool_maker USING btree (last_updated);
+CREATE INDEX tool_maker_user_id_idx ON aitool.tool_maker USING btree (user_id);
 
 
 -- aitool.tool_permission definition
@@ -184,6 +247,7 @@ CREATE TABLE tool_permission (
 	CONSTRAINT tool_permission_pk PRIMARY KEY (user_id, access_key_id, tool_id)
 );
 CREATE INDEX tool_permission_access_key_id_idx ON aitool.tool_permission USING btree (access_key_id);
+CREATE INDEX tool_permission_access_key_id_status_idx ON aitool.tool_permission USING btree (access_key_id, status);
 CREATE INDEX tool_permission_last_updated_idx ON aitool.tool_permission USING btree (last_updated);
 CREATE INDEX tool_permission_user_id_idx ON aitool.tool_permission USING btree (user_id);
 CREATE INDEX tool_permission_user_id_key_id_idx ON aitool.tool_permission USING btree (user_id, access_key_id);
@@ -210,3 +274,52 @@ CREATE TABLE tool_provider (
 CREATE INDEX tools_provider_app_id_idx ON aitool.tool_provider USING btree (app_id);
 CREATE INDEX tools_provider_last_updated_idx ON aitool.tool_provider USING btree (last_updated);
 CREATE UNIQUE INDEX tools_provider_user_id_idx ON aitool.tool_provider USING btree (user_id, provider_id);
+
+
+-- aitool.virtual_tool definition
+
+-- Drop table
+
+-- DROP TABLE virtual_tool;
+
+CREATE TABLE virtual_tool (
+	id int8 NOT NULL,
+	maker_id int8 NOT NULL,
+	tool_id int8 NOT NULL,
+	status int2 NOT NULL,
+	tags varchar NULL,
+	maker_status int2 NOT NULL,
+	last_updated int8 NOT NULL,
+	user_id int8 DEFAULT 0 NOT NULL,
+	CONSTRAINT virtual_tool_pk PRIMARY KEY (id)
+);
+CREATE INDEX virtual_tool_maker_id_idx ON aitool.virtual_tool USING btree (maker_id);
+CREATE INDEX virtual_tool_maker_id_status_idx ON aitool.virtual_tool USING btree (maker_id, status);
+CREATE INDEX virtual_tool_status_idx ON aitool.virtual_tool USING btree (status);
+CREATE INDEX virtual_tool_tool_id_idx ON aitool.virtual_tool USING btree (tool_id);
+CREATE INDEX virtual_tool_tool_maker_id_idx ON aitool.virtual_tool USING btree (tool_id, maker_id);
+CREATE INDEX virtual_tool_user_id_idx ON aitool.virtual_tool USING btree (user_id);
+CREATE INDEX virtual_tool_user_id_status_idx ON aitool.virtual_tool USING btree (user_id, status);
+
+
+-- aitool.virtual_tool_permission definition
+
+-- Drop table
+
+-- DROP TABLE virtual_tool_permission;
+
+CREATE TABLE virtual_tool_permission (
+	user_id int8 NOT NULL,
+	access_key_id int8 NOT NULL,
+	tool_id int8 NOT NULL,
+	last_updated int8 NOT NULL,
+	status int2 NOT NULL,
+	original_tool_id int8 NOT NULL,
+	CONSTRAINT virtual_tool_permission_pk PRIMARY KEY (user_id, access_key_id, tool_id)
+);
+CREATE INDEX virtual_tool_permission_access_key_id_idx ON aitool.virtual_tool_permission USING btree (access_key_id);
+CREATE INDEX virtual_tool_permission_access_key_id_status_idx ON aitool.virtual_tool_permission USING btree (access_key_id, status);
+CREATE INDEX virtual_tool_permission_last_updated_idx ON aitool.virtual_tool_permission USING btree (last_updated);
+CREATE INDEX virtual_tool_permission_user_id_idx ON aitool.virtual_tool_permission USING btree (user_id);
+CREATE INDEX virtual_tool_permission_user_id_key_id_idx ON aitool.virtual_tool_permission USING btree (user_id, access_key_id);
+CREATE INDEX virtual_tool_permission_user_id_key_id_status_idx ON aitool.virtual_tool_permission USING btree (user_id, access_key_id, status);
