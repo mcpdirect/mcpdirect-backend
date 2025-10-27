@@ -18,6 +18,9 @@
 - Updated test file MailTest.java with proper email testing functionality
 - Fixed SQL update query formatting in TeamToolMakerMapper
 
+### Changed
+- Updated SQL schema files for account and aitool tables
+
 ### Security
 - Removed .qwen/settings.json from git tracking and added to .gitignore to protect sensitive data (API keys and credentials)
 
