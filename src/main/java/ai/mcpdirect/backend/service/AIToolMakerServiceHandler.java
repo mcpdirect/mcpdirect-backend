@@ -68,7 +68,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         toolMapper.insertToolMaker(maker);
         if(req.type==AIPortToolMaker.TYPE_MCP){
             req.mcpServerConfig.id = maker.id;
-            req.mcpServerConfig.created = System.currentTimeMillis();
             toolMapper.insertMCPServerConfig(req.mcpServerConfig);
         }
         resp.success(maker);

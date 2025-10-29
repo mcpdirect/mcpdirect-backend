@@ -1,13 +1,11 @@
 package ai.mcpdirect.backend.dao.entity.aitool;
 
-import ai.mcpdirect.backend.util.ID;
-
-public class AIPortMCPServerConfig {
+public class AIPortMcpServerConfigTemplate {
     public long id;
-    
-    public int transport;
+    public long created;
     public String url;
     public String command;
     public String args;
     public String env;
+    public int transport;
 }

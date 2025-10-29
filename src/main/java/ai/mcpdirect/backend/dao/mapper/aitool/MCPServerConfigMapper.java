@@ -9,13 +9,13 @@ import java.util.List;
 public interface MCPServerConfigMapper {
 
     String TABLE_NAME = "aitool.mcp_server_config";
-    String SELECT_FIELDS = "id, created, transport,url, command, args, env";
+    String SELECT_FIELDS = "id, transport,url, command, args, env";
 
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, transport,url, command, args, env) " +
-            "VALUES (#{id}, #{created}, #{transport},#{url}, #{command}, #{args}, #{env})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, transport,url, command, args, env) " +
+            "VALUES (#{id},#{transport},#{url}, #{command}, #{args}, #{env})")
     int insertMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
-    @Update("UPDATE " + TABLE_NAME + " SET created = #{created}, url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
+    @Update("UPDATE " + TABLE_NAME + " SET url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
     int updateMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE id = #{id}")

@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased] - 2025-10-29
+
+### Added
+- Generated AIPortToolMakerTemplate and AIPortMcpServerConfigTemplate entity classes based on tool_maker_template and mcp_server_config_template SQL table structures
+
 ## [Unreleased] - 2025-10-25
 
 ### Added
