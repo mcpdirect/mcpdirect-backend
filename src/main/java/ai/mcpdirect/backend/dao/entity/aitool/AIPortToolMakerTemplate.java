@@ -6,7 +6,6 @@ public class AIPortToolMakerTemplate {
     public int status;
     public int type;
     public String name;
-    public String tags;
     public long agentId;
     public long lastUpdated;
     public long userId;

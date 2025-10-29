@@ -5,6 +5,10 @@
 ### Added
 - Generated AIPortToolMakerTemplate and AIPortMcpServerConfigTemplate entity classes based on tool_maker_template and mcp_server_config_template SQL table structures
 
+### Fixed
+- Corrected AIPortMcpServerConfigTemplate entity structure to match actual database table (only id and config fields)
+- Verified AIPortToolMakerTemplate entity structure matches actual database table
+
 ## [Unreleased] - 2025-10-25
 
 ### Added
