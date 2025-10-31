@@ -10,7 +10,8 @@
 - Verified AIPortToolMakerTemplate entity structure matches actual database table
 
 ### Added
-- Generated ToolMakerTemplateMapper interface for AIPortToolMakerTemplate entity
+- Generated ToolMakerTemplateMapper interface for AIPortToolMakerTemplate and AIPortToolMakerTemplateInstance entities
+- Added methods for both template and template instance operations in ToolMakerTemplateMapper
 
 ## [Unreleased] - 2025-10-25
 
