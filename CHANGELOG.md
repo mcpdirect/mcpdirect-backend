@@ -9,6 +9,9 @@
 - Corrected AIPortMcpServerConfigTemplate entity structure to match actual database table (only id and config fields)
 - Verified AIPortToolMakerTemplate entity structure matches actual database table
 
+### Added
+- Generated ToolMakerTemplateMapper interface for AIPortToolMakerTemplate entity
+
 ## [Unreleased] - 2025-10-25
 
 ### Added
