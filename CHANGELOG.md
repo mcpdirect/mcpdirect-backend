@@ -14,12 +14,21 @@
 - Added methods for both template and template instance operations in ToolMakerTemplateMapper
 - Created AIToolMakerTemplateServiceHandler for managing tool maker templates
 
+### Added
+- Generated ToolMakerTemplateMapper interface for AIPortToolMakerTemplate and AIPortToolMakerTemplateInstance entities
+- Added methods for both template and template instance operations in ToolMakerTemplateMapper
+- Created AIToolMakerTemplateServiceHandler for managing tool maker templates
+- Added TeamToolMakerTemplateMapper for team-based tool maker template management
+
 ### Changed
 - Updated AIPortToolMaker with templateId field for linking to templates
 - Updated AIPortMCPServerConfig with inputs field and JsonRawValue annotation
+- Renamed field in AIPortTeamToolMakerTemplate from templateId to toolMakerTemplateId
 - Modified ToolMakerMapper to include template-based queries
 - Enhanced MCPServerConfigMapper with join capabilities
 - Updated service handlers to support template functionality
+- Updated AIToolMakerTemplateServiceHandler with improved team template functionality
+- Added team-based queries for tool maker templates
 
 ## [Unreleased] - 2025-10-25
 
