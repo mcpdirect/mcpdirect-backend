@@ -299,4 +299,16 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
     ){
         resp.success(toolMapper.selectToolAgentsByUserId(account.id));
     }
+
+    public static class RequestOfGetToolAgent{
+        public long toolAgentId;
+    }
+    @ServiceRequestMapping("get")
+    public void getToolAgent(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetToolAgent req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolAgent> resp
+    ){
+        resp.success(toolMapper.selectToolAgentById(req.toolAgentId));
+    }
 }

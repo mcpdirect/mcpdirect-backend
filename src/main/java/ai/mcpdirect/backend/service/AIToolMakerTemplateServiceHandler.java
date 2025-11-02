@@ -20,7 +20,7 @@ import java.util.List;
 
 
 @ServiceName("aitools.management")
-@ServiceRequestMapping("/tool_maker_template/")
+@ServiceRequestMapping("/tool_maker/template/")
 public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticationHandler{
     private static final Logger LOG = LoggerFactory.getLogger(AIToolMakerTemplateServiceHandler.class);
 
@@ -43,7 +43,6 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
     }
     @ServiceRequestMapping("create")
     public void createToolMakerTemplate(
-            ServiceRequest request,
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfCreateToolMakerTemplate req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMakerTemplate> resp
@@ -96,72 +95,64 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
             @ServiceRequestMessage RequestOfQueryToolMakerTemplate req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolMakerTemplate>> resp
     ){
-        resp.success(toolMapper.selectToolMakerTemplateByUserId(account.id,req.lastUpdated));
+        List<AIPortToolMakerTemplate> list = toolMapper.selectToolMakerTemplateByUserId(account.id,req.lastUpdated);
+        list.addAll(toolMapper.selectToolMakerTemplateByMemberId(account.id,req.lastUpdated));
+        resp.success(list);
     }
 
-    public static class RequestOfModifyTeamToolMaker{
+    public static class RequestOfModifyTeamToolMakerTemplate{
         public long teamId;
-        public long teamOwnerId;
-        public List<AIPortTeamToolMaker> teamToolMakers;
+        public List<AIPortTeamToolMakerTemplate> teamToolMakerTemplates;
     }
     @ServiceRequestMapping("team/modify")
     public void modifyTeamToolMaker(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfModifyTeamToolMaker req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
+            @ServiceRequestMessage RequestOfModifyTeamToolMakerTemplate req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMakerTemplate>> resp
     ) throws Exception {
 
         long now = System.currentTimeMillis();
-        if(req.teamId<1||req.teamOwnerId<1||req.teamToolMakers==null||req.teamToolMakers.isEmpty()){
+        if(req.teamId<1||req.teamToolMakerTemplates==null||req.teamToolMakerTemplates.isEmpty()){
             return;
         }
         AIPortTeamMember m;
-        AIPortTeam t;
-        boolean isOwner = req.teamOwnerId==account.id;
-        if(isOwner&&((t=accountMapper.selectTeamById(req.teamId))==null||t.ownerId!=req.teamOwnerId)){
-            return;
-        }else if(!isOwner &&((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
-                ||m.status!=1||m.expirationDate<now)){
+        if((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
+                ||m.status!=1||m.expirationDate<now){
             return;
         }
 
             AIToolDataHelper.getInstance().executeSql(sqlSession -> {
                 AIToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
-                for (AIPortTeamToolMaker tmt : req.teamToolMakers) if(tmt.toolMakerId>0){
+                for (AIPortTeamToolMakerTemplate tmt : req.teamToolMakerTemplates) if(tmt.toolMakerTemplateId>0){
                     tmt.teamId = req.teamId;
                     tmt.lastUpdated = now;
                     int status = tmt.status;
                     if(status==Short.MAX_VALUE){
                         tmt.created = now;
                         tmt.status = 1;
-                        mapper.insertTeamToolMaker(tmt);
+                        mapper.insertTeamToolMakerTemplate(tmt);
                     }else if(status==0||status==1){
-                        mapper.updateTeamToolMaker(tmt);
+                        mapper.updateTeamToolMakerTemplate(tmt);
                     }
                 }
                 return true;
             });
-            resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
+            resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId));
     }
     public static class RequestOfQueryTeamToolMaker{
         public long teamId;
-        public long teamOwnerId;
     }
     @ServiceRequestMapping("team/query")
-    public void queryTeamToolMakers(
+    public void queryTeamToolMakerTemplates(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMakerTemplate>> resp
     ) throws Exception {
-        if(req.teamId<1||req.teamOwnerId<1){
-            return;
-        }
         AIPortTeamMember m;
-        if(req.teamOwnerId!=account.id
-                &&((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
-                ||m.status!=1||m.expirationDate<System.currentTimeMillis())){
+        if(req.teamId<1||(m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
+                ||m.status!=1||m.expirationDate<System.currentTimeMillis()){
             return;
         }
-        resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
+        resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId));
     }
 }

@@ -15,13 +15,13 @@ public interface MCPServerConfigMapper {
 
     @Insert("INSERT INTO " + TABLE_NAME + " (id, transport,url, command, args, env,inputs) " +
             "VALUES (#{id},#{transport},#{url}, #{command}, #{args}, #{env},#{inputs})")
-    int insertMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
+    void insertMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
     @Update("UPDATE " + TABLE_NAME + " SET url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
     int updateMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
     @Select("SELECT " + SELECT_FIELDS_JOIN + " FROM " + TABLE_NAME_JOIN + "\n" +
-            "JOIN " +ToolMakerMapper.TABLE_JOIN_NAME+" ON tm.id=msc.id AND tm.template_id==0 AND tm.user_id=#{userId}\n" +
+            "JOIN " +ToolMakerMapper.TABLE_JOIN_NAME+" ON tm.id=msc.id AND tm.template_id=0 AND tm.user_id=#{userId}\n" +
             "WHERE msc.id = #{id}")
     AIPortMCPServerConfig selectMCPServerConfigById(@Param("userId") long userId,@Param("id") long id);
 

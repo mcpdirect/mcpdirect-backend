@@ -1,14 +1,14 @@
 package ai.mcpdirect.backend.dao.entity.aitool;
 
 public class AIPortTeamToolMakerTemplate {
-    public long templateId;
+    public long toolMakerTemplateId;
     public long teamId;
     public Integer status;
     public long created;
     public long lastUpdated;
 
     public AIPortTeamToolMakerTemplate templateId(long templateId) {
-        this.templateId = templateId;
+        this.toolMakerTemplateId = templateId;
         return this;
     }
 
