@@ -19,9 +19,13 @@
 - Added methods for both template and template instance operations in ToolMakerTemplateMapper
 - Created AIToolMakerTemplateServiceHandler for managing tool maker templates
 - Added TeamToolMakerTemplateMapper for team-based tool maker template management
+- Added templating functionality to tool maker creation in AIToolMakerServiceHandler
+- Added getUserAccount endpoint to AccountServiceHandler
+- Added getTeamMember endpoint to AccountServiceHandler
 
 ### Changed
 - Updated AIPortToolMaker with templateId field for linking to templates
+- Added fluent setter methods (name, tags) to AIPortToolMaker
 - Updated AIPortMCPServerConfig with inputs field and JsonRawValue annotation
 - Renamed field in AIPortTeamToolMakerTemplate from templateId to toolMakerTemplateId
 - Modified ToolMakerMapper to include template-based queries
@@ -29,6 +33,9 @@
 - Updated service handlers to support template functionality
 - Updated AIToolMakerTemplateServiceHandler with improved team template functionality
 - Added team-based queries for tool maker templates
+- Enhanced AccountMapper with improved user selection methods
+- Updated authentication service to use improved user selection method
+- Renamed queryTeamMember to queryTeamMembers in AccountServiceHandler
 
 ## [Unreleased] - 2025-10-25
 
