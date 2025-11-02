@@ -11,16 +11,16 @@ public interface ToolMakerMapper {
 
     String TABLE_NAME = "aitool.tool_maker";
 //    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated, hash, tools, type, name, tags, agent_id agentId";
-    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId,user_id userId";
+    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId,user_id userId,template_id templateId";
 
     String TABLE_JOIN_NAME = "aitool.tool_maker tm";
     String SELECT_JOIN_FIELDS = "tm.id, tm.created, tm.status, tm.last_updated lastUpdated,tm.type, tm.name, tm.tags," +
-            "tm.agent_id agentId, tm.user_id userId";
+            "tm.agent_id agentId, tm.user_id userId,tm.template_id templateId";
 
 //    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, hash, tools, type, name, tags, agent_id) " +
 //            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{hash}, #{tools}, #{type}, #{name}, #{tags}, #{agentId})")
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id,user_id) " +
-            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId},#{userId})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id,user_id,template_id) " +
+            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId},#{userId},template_id)")
 
     void insertToolMaker(AIPortToolMaker toolsMaker);
 
@@ -117,8 +117,16 @@ public interface ToolMakerMapper {
     @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
             "FROM "+TeamMapper.teamMemberTable+" atm\n" +
             "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
-            "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
+            "JOIN "+TABLE_JOIN_NAME+" on tm.user_id<>#{userId} AND ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
             "WHERE atm.member_id=#{userId}")
     List<AIPortToolMaker> selectToolMakersByTeamMemberId(@Param("userId") long userId,
+                                                         @Param("lastUpdated")long lastUpdated);
+
+    @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
+            "FROM "+TeamMapper.teamMemberTable+" atm\n" +
+            "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
+            "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
+            "WHERE atm.member_id=#{userId}")
+    List<AIPortToolMaker> selectToolMakersByTeamTemplateId(@Param("userId") long userId,
                                                          @Param("lastUpdated")long lastUpdated);
 }

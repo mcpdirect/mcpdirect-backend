@@ -152,7 +152,7 @@ public class AIToolDiscoveryServiceHandler extends ServiceRequestAuthenticationH
             }
             AIToolsDirectory.Description d = new AIToolsDirectory.Description();
             d.name = tool.name;
-            d.tags = tool.tags;
+//            d.tags = tool.tags;
             d.metaData = tool.metaData;
             tools.descriptions.add(d);
         }

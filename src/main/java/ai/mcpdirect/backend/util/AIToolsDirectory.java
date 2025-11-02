@@ -9,8 +9,8 @@ import java.util.Map;
 public class AIToolsDirectory {
     public static class Description{
         public String name;
-        @JsonRawValue
-        public String tags;
+//        @JsonRawValue
+//        public String tags;
         @JsonRawValue
         public String metaData;
     }

@@ -21,4 +21,5 @@ public class AIPortToolMaker {
     public String agentName;
     public long userId;
     public long teamId;
+    public long templateId;
 }

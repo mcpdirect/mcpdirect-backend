@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAgentMapper,
         MCPServerConfigMapper, ToolMakerMapper,ToolPermissionMapper,VirtualToolMapper,
-        VirtualToolPermissionMapper, TeamToolMakerMapper {
+        VirtualToolPermissionMapper, TeamToolMakerMapper,ToolMakerTemplateMapper {
 
     String TABLE_NAME = "aitool.tool";
     String SELECT_FIELDS = """

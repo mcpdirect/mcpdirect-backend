@@ -211,4 +211,19 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         }
         resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
     }
+
+    public static class RequestOfGetMCPServerConfig{
+        public long configId;
+    }
+    @ServiceRequestMapping("mcp_server_config/get")
+    public void getMCPServerConfig(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetMCPServerConfig req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortMCPServerConfig> resp
+    ) throws Exception {
+        if(req.configId<1){
+            return;
+        }
+        resp.success(toolMapper.selectMCPServerConfigById(account.id,req.configId));
+    }
 }
