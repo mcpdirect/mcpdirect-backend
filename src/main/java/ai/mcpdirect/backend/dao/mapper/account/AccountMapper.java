@@ -33,10 +33,11 @@ public interface AccountMapper extends AccessKeyMapper,OtpMapper,TeamMapper{
     @Select(selectUserAccount+"where id=#{id}")
     AIPortAccount selectUserAccountById(long id);
 
-    String selectUser="SELECT a.id,a.\"name\",a.\"language\", a.created, a.\"type\" FROM "
-            +userTable+" a\n";
-    @Select(selectUser+"where a.id=#{id}")
-    AIPortUser selectUser(long id);
+    @Select("SELECT a.id,a.\"name\",a.\"language\", a.created, a.\"type\" ,ua.account\n" +
+            "FROM " +userAccountTable+" ua\n" +
+            "LEFT JOIN "+userTable+" a on ua.id=a.id\n" +
+            "where ua.id=#{id}")
+    AIPortUser selectUserById(long id);
 
     @Select("SELECT a.id,a.\"name\",a.\"language\", a.created, a.\"type\" ,ua.account\n" +
             "FROM " +userAccountTable+" ua\n" +

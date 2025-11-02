@@ -34,6 +34,11 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     public static class RequestOfCreateToolMaker{
+        public boolean templated;
+        public long templateId;
+        public long userId;
+        public long agentId;
+
         public String name;
         public int type;
         public String tags;
@@ -49,23 +54,32 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         AIPortToolMaker maker = new AIPortToolMaker();
         maker.id = ID.nextId();
         maker.userId = account.id;
-        maker.name = req.name;
-        maker.type = req.type;
-        maker.tags = req.tags;
+        maker.name(req.name);
+        maker.tags(req.tags);
+
         if(req.type != AIPortToolMaker.TYPE_VIRTUAL) {
             if(req.type == AIPortToolMaker.TYPE_MCP&&req.mcpServerConfig==null){
                 return;
             }
-            AIPortToolAgent agent = toolMapper.selectToolAgentByEngineId(account.id, request.getRequestEngineId());
-            if(agent==null){
+            AIPortToolAgent agent;
+            if(req.templated) {
+                maker.userId = req.userId;
+                maker.templateId = req.templateId;
+                agent = toolMapper.selectToolAgentById(req.agentId);
+            } else agent = toolMapper.selectToolAgentByEngineId(account.id, request.getRequestEngineId());
+
+            if(agent==null||agent.userId!=account.id){
                 return;
             }
             maker.agentId = agent.id;
         }
+
+        maker.type = req.type;
         maker.status = 1;
         maker.created = System.currentTimeMillis();
         maker.lastUpdated = maker.created;
         toolMapper.insertToolMaker(maker);
+
         if(req.type==AIPortToolMaker.TYPE_MCP){
             req.mcpServerConfig.id = maker.id;
             toolMapper.insertMCPServerConfig(req.mcpServerConfig);

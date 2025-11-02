@@ -22,4 +22,19 @@ public class AIPortToolMaker {
     public long userId;
     public long teamId;
     public long templateId;
+
+    public AIPortToolMaker name(String name){
+        if(name==null||(name=name.trim()).isEmpty()||name.length()>50){
+            throw new RuntimeException("invalid name");
+        }
+        this.name = name;
+        return this;
+    }
+    public AIPortToolMaker tags(String tags){
+        if((tags=tags.trim()).isEmpty()||tags.length()>100){
+            throw new RuntimeException("invalid tags");
+        }
+        this.tags = tags;
+        return this;
+    }
 }

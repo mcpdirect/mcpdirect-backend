@@ -272,7 +272,7 @@ public class AuthenticationServiceHandler {
                     resp.data.accountKeySeed = credentials.keySeed;
                     resp.data.accessToken = ar.data;
                     resp.data.accessTokenType = AIPortAccount.PASSWORD;
-                    resp.data.userInfo = accountMapper.selectUser(credentials.id);
+                    resp.data.userInfo = accountMapper.selectUserById(credentials.id);
                     resp.success();
                 }
             }
@@ -317,7 +317,7 @@ public class AuthenticationServiceHandler {
                     resp.data.accountKeySeed = credentials.keySeed;
                     resp.data.accessToken = ar.data;
                     resp.data.accessTokenType = AIPortAccount.ANONYMOUS;
-                    resp.data.userInfo = accountMapper.selectUser(credentials.id);
+                    resp.data.userInfo = accountMapper.selectUserById(credentials.id);
                     resp.success();
                 }
             }

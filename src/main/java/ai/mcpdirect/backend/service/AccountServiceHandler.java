@@ -126,7 +126,7 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         AIPortAccount account = accountMapper.selectUserAccount(req.account);
         AIPortUser user = null;
         if (account != null) {
-            user = accountMapper.selectUser(account.id);
+            user = accountMapper.selectUserById(account.id);
         }
         resp.success(new UserInfo(user, account));
     }
@@ -328,7 +328,17 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             resp.success(false);
         }
     }
-
+    public static class RequestOfGetUserAccount{
+        public long userId;
+    }
+    @ServiceRequestMapping("user/get")
+    public void getUserAccount(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetUserAccount req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortUser> resp
+    ){
+        if(req.userId>Integer.MAX_VALUE) resp.success(accountMapper.selectUserById(req.userId));
+    }
     public static class RequestOfCreateTeam{
         public String name;
     }
@@ -452,13 +462,30 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         public long teamId;
     }
     @ServiceRequestMapping("team/member/query")
-    public void queryTeamMember(
+    public void queryTeamMembers(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfQueryTeamMember req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamMember>> resp
     ){
         if(req.teamId>0&&(accountMapper.selectTeamById(req.teamId))!=null) {
             resp.success(accountMapper.selectTeamMembersByTeamId(req.teamId));
+        }else{
+            resp.code = TEAM_NOT_EXIST;
+        }
+    }
+
+    public static class RequestOfGetTeamMember{
+        public long teamId;
+        public long memberId;
+    }
+    @ServiceRequestMapping("team/member/get")
+    public void getTeamMember(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetTeamMember req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortTeamMember> resp
+    ){
+        if(req.teamId>0&&(accountMapper.selectTeamMemberById(req.teamId,account.id))!=null) {
+            resp.success(accountMapper.selectTeamMemberById(req.teamId,req.memberId));
         }else{
             resp.code = TEAM_NOT_EXIST;
         }
