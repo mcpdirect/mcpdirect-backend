@@ -27,8 +27,10 @@
 ### Changed
 - Updated AIPortToolMaker with templateId field for linking to templates
 - Added fluent setter methods (name, tags) to AIPortToolMaker
+- Fixed null handling in AIPortToolMaker tags method
 - Updated AIPortMCPServerConfig with inputs field and JsonRawValue annotation
 - Renamed field in AIPortTeamToolMakerTemplate from templateId to toolMakerTemplateId
+- Fixed templateId parameter in ToolMakerMapper insert statement
 - Modified ToolMakerMapper to include template-based queries
 - Enhanced MCPServerConfigMapper with join capabilities
 - Updated service handlers to support template functionality
@@ -40,6 +42,8 @@
 - Improved tool handling performance in AIToolAgentServiceHandler using stream and map operations
 - Reverted join logic in MCPServerConfigMapper for simpler direct query approach
 - Updated getMCPServerConfig endpoint to use simpler query method
+- Removed templated flag from tool maker creation request and updated templateId logic
+- Updated tool maker creation to handle template-based creation differently
 
 ## [Unreleased] - 2025-10-25
 
