@@ -117,12 +117,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     public static class RequestOfQueryToolMaker{
-        @ServiceRequestSchema(
-                description = """
-                        type = null means select all tool makers and virtual too makers,
-                        type = 0 means select all virtual tool makers
-                        type > 0 means select tool makers with the type"""
-        )
         public Integer type;
         public String name;
         public Long toolAgentId;
@@ -158,6 +152,34 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             list.addAll(toolMapper.selectToolMakersByTeamMemberId(account.id,req.lastUpdated));
         }
         resp.success(list);
+    }
+
+    public static class RequestOfGetToolMakerDetails{
+        public long makerId;
+    }
+    public static class ToolMakerDetails{
+        public AIPortToolMaker maker;
+        public AIPortMCPServerConfig config;
+        public List<AIPortTool> tools;
+    }
+    @ServiceRequestMapping("details/get")
+    public void getToolMakerDetails(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetToolMakerDetails req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<ToolMakerDetails> resp
+    ){
+        if(req.makerId<Integer.MAX_VALUE){
+            return;
+        }
+        ToolMakerDetails details = new ToolMakerDetails();
+        details.maker = toolMapper.selectToolMakerById(req.makerId);
+        if(details.maker==null){
+            return;
+        }
+        details.config = toolMapper.selectMCPServerConfigById(req.makerId);
+        details.tools = toolMapper.selectToolsByMakerId(req.makerId);
+
+        resp.success(details);
     }
 
     public static class RequestOfModifyTeamToolMaker{
@@ -235,9 +257,9 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             @ServiceRequestMessage RequestOfGetMCPServerConfig req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortMCPServerConfig> resp
     ) throws Exception {
-        if(req.configId<1){
+        if(req.configId<Integer.MAX_VALUE){
             return;
         }
-        resp.success(toolMapper.selectMCPServerConfigById(account.id,req.configId));
+        resp.success(toolMapper.selectMCPServerConfigById(req.configId));
     }
 }

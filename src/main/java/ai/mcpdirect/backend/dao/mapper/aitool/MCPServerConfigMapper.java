@@ -20,10 +20,13 @@ public interface MCPServerConfigMapper {
     @Update("UPDATE " + TABLE_NAME + " SET url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
     int updateMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
-    @Select("SELECT " + SELECT_FIELDS_JOIN + " FROM " + TABLE_NAME_JOIN + "\n" +
-            "JOIN " +ToolMakerMapper.TABLE_JOIN_NAME+" ON tm.id=msc.id AND tm.template_id=0 AND tm.user_id=#{userId}\n" +
-            "WHERE msc.id = #{id}")
-    AIPortMCPServerConfig selectMCPServerConfigById(@Param("userId") long userId,@Param("id") long id);
+//    @Select("SELECT " + SELECT_FIELDS_JOIN + " FROM " + TABLE_NAME_JOIN + "\n" +
+//            "JOIN " +ToolMakerMapper.TABLE_JOIN_NAME+" ON tm.id=msc.id AND tm.template_id=0 AND tm.user_id=#{userId}\n" +
+//            "WHERE msc.id = #{id}")
+//    AIPortMCPServerConfig selectMCPServerConfigById(@Param("userId") long userId,@Param("id") long id);
+
+    @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE id = #{id}")
+    AIPortMCPServerConfig selectMCPServerConfigById(@Param("id") long id);
 
     @Select("<script>SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +"\n"+ """
             WHERE id IN
