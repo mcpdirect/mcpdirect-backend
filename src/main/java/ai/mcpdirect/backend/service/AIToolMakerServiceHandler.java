@@ -34,7 +34,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
 
     public static class RequestOfCreateToolMaker{
-        public boolean templated;
         public long templateId;
         public long userId;
         public long agentId;
@@ -62,13 +61,14 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
                 return;
             }
             AIPortToolAgent agent;
-            if(req.templated) {
+            if(req.templateId>Integer.MAX_VALUE) {
                 maker.userId = req.userId;
                 maker.templateId = req.templateId;
                 agent = toolMapper.selectToolAgentById(req.agentId);
             } else agent = toolMapper.selectToolAgentByEngineId(account.id, request.getRequestEngineId());
 
-            if(agent==null||agent.userId!=account.id){
+//            if(agent==null||agent.userId!=account.id){
+            if(agent==null){
                 return;
             }
             maker.agentId = agent.id;
