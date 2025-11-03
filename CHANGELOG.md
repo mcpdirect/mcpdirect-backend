@@ -22,6 +22,7 @@
 - Added templating functionality to tool maker creation in AIToolMakerServiceHandler
 - Added getUserAccount endpoint to AccountServiceHandler
 - Added getTeamMember endpoint to AccountServiceHandler
+- Added getToolMakerDetails endpoint to AIToolMakerServiceHandler with maker, config, and tools
 
 ### Changed
 - Updated AIPortToolMaker with templateId field for linking to templates
@@ -36,6 +37,9 @@
 - Enhanced AccountMapper with improved user selection methods
 - Updated authentication service to use improved user selection method
 - Renamed queryTeamMember to queryTeamMembers in AccountServiceHandler
+- Improved tool handling performance in AIToolAgentServiceHandler using stream and map operations
+- Reverted join logic in MCPServerConfigMapper for simpler direct query approach
+- Updated getMCPServerConfig endpoint to use simpler query method
 
 ## [Unreleased] - 2025-10-25
 
