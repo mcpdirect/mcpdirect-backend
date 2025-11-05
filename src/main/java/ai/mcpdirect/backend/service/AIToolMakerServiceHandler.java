@@ -228,7 +228,8 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
     public static class RequestOfQueryTeamToolMaker{
         public long teamId;
-        public long teamOwnerId;
+        public long lastUpdated;
+//        public long teamOwnerId;
     }
     @ServiceRequestMapping("team/query")
     public void queryTeamToolMakers(
@@ -236,16 +237,17 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMaker>> resp
     ) throws Exception {
-        if(req.teamId<1||req.teamOwnerId<1){
-            return;
+        if(req.teamId==0){
+            resp.success(toolMapper.selectTeamToolMakersByMemberId(account.id,req.lastUpdated));
+        }else {
+            AIPortTeamMember m;
+            if (req.teamId < Integer.MAX_VALUE
+                    || (m = accountMapper.selectTeamMemberById(req.teamId, account.id)) == null
+                    || m.status != 1 || m.expirationDate < System.currentTimeMillis()) {
+                return;
+            }
+            resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
         }
-        AIPortTeamMember m;
-        if(req.teamOwnerId!=account.id
-                &&((m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
-                ||m.status!=1||m.expirationDate<System.currentTimeMillis())){
-            return;
-        }
-        resp.success(toolMapper.selectTeamToolMakerByTeamId(req.teamId));
     }
 
     public static class RequestOfGetMCPServerConfig{

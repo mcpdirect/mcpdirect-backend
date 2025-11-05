@@ -137,10 +137,11 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
                 }
                 return true;
             });
-            resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId));
+            resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId,0));
     }
     public static class RequestOfQueryTeamToolMaker{
         public long teamId;
+        public long lastUpdated;
     }
     @ServiceRequestMapping("team/query")
     public void queryTeamToolMakerTemplates(
@@ -148,11 +149,16 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
             @ServiceRequestMessage RequestOfQueryTeamToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMakerTemplate>> resp
     ) throws Exception {
-        AIPortTeamMember m;
-        if(req.teamId<1||(m=accountMapper.selectTeamMemberById(req.teamId,account.id))==null
-                ||m.status!=1||m.expirationDate<System.currentTimeMillis()){
-            return;
+        if(req.teamId==0){
+            resp.success(toolMapper.selectTeamToolMakerTemplatesByMemberId(account.id,req.lastUpdated));
+        }else {
+            AIPortTeamMember m;
+            if (req.teamId < Integer.MAX_VALUE
+                    || (m = accountMapper.selectTeamMemberById(req.teamId, account.id)) == null
+                    || m.status != 1 || m.expirationDate < System.currentTimeMillis()) {
+                return;
+            }
+            resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId,0));
         }
-        resp.success(toolMapper.selectTeamToolMakerTemplatesByTeamId(req.teamId));
     }
 }

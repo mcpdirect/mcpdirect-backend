@@ -31,7 +31,7 @@ public class AIPortToolMaker {
         return this;
     }
     public AIPortToolMaker tags(String tags){
-        if(tags!=null&&((tags=tags.trim()).isEmpty()||tags.length()>100)){
+        if(tags!=null&&(tags=tags.trim()).length()>100){
             throw new RuntimeException("invalid tags");
         }
         this.tags = tags;

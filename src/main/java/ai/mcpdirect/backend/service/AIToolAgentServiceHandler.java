@@ -65,7 +65,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                         AIPortTool old = oldTools.get(tool.name);
                         if (old == null) {
                             tool.id = ID.nextId();
-                            tool.userId = account.id;
+                            tool.userId = m.userId;
                             tool.makerId = req.maker.id;
                             tool.makerStatus = 1;
                             tool.agentId = agent.id;
