@@ -19,7 +19,7 @@ public interface TeamToolMakerMapper {
             VALUES(#{toolMakerId}, #{teamId}, #{status}, #{created}, #{lastUpdated})""")
     void insertTeamToolMaker(AIPortTeamToolMaker t);
 
-    @Select(SELECT_FROM_TEAM_TOOL_MAKER_TABLE +"WHERE team_id=#{team_Id}")
+    @Select(SELECT_FROM_TEAM_TOOL_MAKER_TABLE +"WHERE team_id=#{teamId}")
     List<AIPortTeamToolMaker> selectTeamToolMakerByTeamId(long teamId);
 
     @Select("SELECT "+SELECT_FIELDS_JOIN +" FROM "+TEAM_TOOL_MAKER_TABLE+" ttm\n" +

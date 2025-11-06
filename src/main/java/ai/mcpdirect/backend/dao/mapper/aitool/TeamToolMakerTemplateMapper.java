@@ -22,7 +22,7 @@ public interface TeamToolMakerTemplateMapper {
             VALUES(#{toolMakerTemplateId}, #{teamId}, #{status}, #{created}, #{lastUpdated})""")
     void insertTeamToolMakerTemplate(AIPortTeamToolMakerTemplate t);
 
-    @Select("SELECT "+SELECT_FIELDS +" FROM "+TABLE+" WHERE team_id=#{team_Id} and last_updated>#{lastUpdated}")
+    @Select("SELECT "+SELECT_FIELDS +" FROM "+TABLE+" WHERE team_id=#{teamId} and last_updated>#{lastUpdated}")
     List<AIPortTeamToolMakerTemplate> selectTeamToolMakerTemplatesByTeamId(
             @Param("teamId") long teamId,@Param("lastUpdated") long lastUpdated
     );
