@@ -48,6 +48,7 @@
 - Enhanced team tool maker queries with member-based functionality
 - Updated user ID assignment in AIToolAgentServiceHandler to use maker's user ID
 - Refined team query logic in AIToolMakerServiceHandler and AIToolMakerTemplateServiceHandler
+- Fixed parameter names in TeamToolMakerMapper and TeamToolMakerTemplateMapper for consistency
 
 ## [Unreleased] - 2025-10-25
 
