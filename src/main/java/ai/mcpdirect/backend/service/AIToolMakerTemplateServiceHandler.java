@@ -150,7 +150,8 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeamToolMakerTemplate>> resp
     ) throws Exception {
         if(req.teamId==0){
-            resp.success(toolMapper.selectTeamToolMakerTemplatesByMemberId(account.id,req.lastUpdated));
+            resp.success(toolMapper.selectTeamToolMakerTemplatesByMemberId(account.id,
+                    req.lastUpdated,System.currentTimeMillis()));
         }else {
             AIPortTeamMember m;
             if (req.teamId < Integer.MAX_VALUE

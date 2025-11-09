@@ -264,4 +264,23 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         }
         resp.success(toolMapper.selectMCPServerConfigById(req.configId));
     }
+
+    public static class RequestOfModifyMCPServerConfig{
+        public AIPortMCPServerConfig mcpServerConfig;
+    }
+
+    @ServiceRequestMapping("mcp_server_config/modify")
+    public void modifyMCPServerConfig(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfModifyMCPServerConfig req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
+    ) throws Exception {
+        AIPortToolMaker maker;
+        if(req.mcpServerConfig!=null&&req.mcpServerConfig.id>Integer.MAX_VALUE
+                &&(maker=toolMapper.selectToolMakerById(req.mcpServerConfig.id))!=null
+                &&maker.userId==account.id){
+            toolMapper.updateMCPServerConfig(req.mcpServerConfig);
+            resp.success(maker);
+        }
+    }
 }

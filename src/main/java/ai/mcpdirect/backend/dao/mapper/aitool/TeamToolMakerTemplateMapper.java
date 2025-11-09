@@ -28,10 +28,13 @@ public interface TeamToolMakerTemplateMapper {
     );
 
     @Select("SELECT "+SELECT_FIELDS_JOIN +" FROM "+TABLE+" ttmt\n" +
-            "LEFT JOIN "+ TeamMapper.teamMemberTable + " tm on tm.team_id = ttmt.team_id and tm.member_id = #{memberId}\n"+
+            "LEFT JOIN "+ TeamMapper.teamMemberTable + " tm on tm.team_id = ttmt.team_id\n" +
+            "and tm.member_id = #{memberId} and tm.expiration_date>#{now}\n"+
             "WHERE ttmt.last_updated>#{lastUpdated}")
     List<AIPortTeamToolMakerTemplate> selectTeamToolMakerTemplatesByMemberId(
-            @Param("memberId") long memberId,@Param("lastUpdated") long lastUpdated
+            @Param("memberId") long memberId,
+            @Param("lastUpdated") long lastUpdated,
+            @Param("now") long now
     );
 
     @Update("UPDATE "+ TABLE + "\n" +"""

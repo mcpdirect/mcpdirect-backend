@@ -17,7 +17,7 @@ public interface MCPServerConfigMapper {
             "VALUES (#{id},#{transport},#{url}, #{command}, #{args}, #{env},#{inputs})")
     void insertMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
-    @Update("UPDATE " + TABLE_NAME + " SET url = #{url}, command = #{command}, args = #{args}, env = #{env} WHERE id = #{id}")
+    @Update("UPDATE " + TABLE_NAME + " SET url = #{url}, command = #{command}, args = #{args}, env = #{env},inputs=#{inputs} WHERE id = #{id}")
     int updateMCPServerConfig(AIPortMCPServerConfig mcpServerConfig);
 
 //    @Select("SELECT " + SELECT_FIELDS_JOIN + " FROM " + TABLE_NAME_JOIN + "\n" +
