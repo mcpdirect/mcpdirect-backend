@@ -11,6 +11,7 @@ import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
 import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
 import appnet.hstp.annotation.*;
+import appnet.hstp.exception.USLSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,19 +100,24 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             @ServiceRequestAuthentication("auk") AIPortAccount account,
             @ServiceRequestMessage RequestOfModifyToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
-    ){
+    ) throws USLSyntaxException {
         AIPortToolMaker maker;
         if(req.makerId>0&&(maker=toolMapper.selectToolMakerById(req.makerId))!=null
                 &&maker.userId==account.id) {
-            if(req.status!=null){
-                toolMapper.updateToolMakerStatus(req.makerId,req.status);
-            }
+            long now = System.currentTimeMillis();
+            boolean updated = false;
             if(req.name!=null&&!(req.name=req.name.trim()).isEmpty()){
-                toolMapper.updateToolMakerName(req.makerId,req.name);
+                toolMapper.updateToolMakerName(req.makerId,req.name,now);
+            }
+            if(req.status!=null){
+                updated = toolMapper.updateToolMakerStatus(req.makerId,req.status,now)>0;
             }
             if(req.tags!=null&&!(req.tags=req.tags.trim()).isEmpty()){
-                toolMapper.updateToolMakerTags(req.makerId,req.tags);
+                updated = updated||toolMapper.updateToolMakerTags(req.makerId,req.tags,now)>0;
             }
+            if(updated) engine.broadcast(
+                    USL.create("aitools@mcpdirect.ai/aitools/publish"),
+                    "{\"tools\":[{\"userId\":"+account.id+",\"lastUpdated\":"+now+"}]}");
             resp.success(toolMapper.selectToolMakerById(req.makerId));
         }
     }

@@ -24,14 +24,14 @@ public interface ToolMakerMapper {
 
     void insertToolMaker(AIPortToolMaker toolsMaker);
 
-    @Update("UPDATE " + TABLE_NAME + " SET status = #{status} WHERE id = #{id}")
-    int updateToolMakerStatus(@Param("id")long id,@Param("status")int status);
+    @Update("UPDATE " + TABLE_NAME + " SET status = #{status},last_updated=#{lastUpdated} WHERE id = #{id}")
+    int updateToolMakerStatus(@Param("id")long id,@Param("status")int status,@Param("lastUpdated")long lastUpdated);
 
-    @Update("UPDATE " + TABLE_NAME + " SET name = #{name} WHERE id = #{id}")
-    int updateToolMakerName(@Param("id")long id,@Param("name")String name);
+    @Update("UPDATE " + TABLE_NAME + " SET name = #{name},last_updated=#{lastUpdated} WHERE id = #{id}")
+    int updateToolMakerName(@Param("id")long id,@Param("name")String name,@Param("lastUpdated")long lastUpdated);
 
-    @Update("UPDATE " + TABLE_NAME + " SET tags = #{tags} WHERE id = #{id}")
-    int updateToolMakerTags(@Param("id")long id,@Param("tags")String tags);
+    @Update("UPDATE " + TABLE_NAME + " SET tags = #{tags},last_updated=#{lastUpdated} WHERE id = #{id}")
+    int updateToolMakerTags(@Param("id")long id,@Param("tags")String tags,@Param("lastUpdated")long lastUpdated);
 
     @Update("UPDATE " + TABLE_NAME +
             " SET " +
