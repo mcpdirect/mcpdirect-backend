@@ -54,6 +54,8 @@
 - Fixed parameter names in TeamToolMakerMapper and TeamToolMakerTemplateMapper for consistency
 - Enhanced team tool maker template queries with expiration date validation
 - Updated team queries to check member expiration dates
+- Updated ToolMakerMapper to include last_updated in update operations (status, name, tags)
+- Improved modifyToolMaker logic with last_updated tracking and broadcast on update
 
 ## [Unreleased] - 2025-10-25
 
