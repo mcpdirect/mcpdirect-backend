@@ -24,8 +24,10 @@
 - Added getTeamMember endpoint to AccountServiceHandler
 - Added getToolMakerDetails endpoint to AIToolMakerServiceHandler with maker, config, and tools
 - Added member-based query methods to TeamToolMakerMapper and TeamToolMakerTemplateMapper
+- Added modifyMCPServerConfig endpoint to AIToolMakerServiceHandler
 
 ### Changed
+- Updated project version from 2.1.0-SNAPSHOT to 2.1.1-SNAPSHOT
 - Updated AIPortToolMaker with templateId field for linking to templates
 - Added fluent setter methods (name, tags) to AIPortToolMaker
 - Fixed null handling in AIPortToolMaker tags method
@@ -34,6 +36,7 @@
 - Fixed templateId parameter in ToolMakerMapper insert statement
 - Modified ToolMakerMapper to include template-based queries
 - Enhanced MCPServerConfigMapper with join capabilities
+- Enhanced MCPServerConfigMapper to update the inputs field
 - Updated service handlers to support template functionality
 - Updated AIToolMakerTemplateServiceHandler with improved team template functionality
 - Added team-based queries for tool maker templates
@@ -49,6 +52,8 @@
 - Updated user ID assignment in AIToolAgentServiceHandler to use maker's user ID
 - Refined team query logic in AIToolMakerServiceHandler and AIToolMakerTemplateServiceHandler
 - Fixed parameter names in TeamToolMakerMapper and TeamToolMakerTemplateMapper for consistency
+- Enhanced team tool maker template queries with expiration date validation
+- Updated team queries to check member expiration dates
 
 ## [Unreleased] - 2025-10-25
 
