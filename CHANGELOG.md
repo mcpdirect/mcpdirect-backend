@@ -1,5 +1,17 @@
 # Changelog
 
+## 2025-11-13
+
+### Summary
+Updated AITool query functionality with last updated filter and version bump
+
+### Details
+- Bumped project version from 2.1.1-SNAPSHOT to 2.1.2-SNAPSHOT in pom.xml
+- Added lastUpdated parameter to AIToolMapper.selectTools method to filter tools by last updated timestamp
+- Modified AIToolServiceHandler to include lastUpdated filter in tool queries
+- Added lastUpdated field to RequestOfQueryTools class
+- Updated .qwen/settings.json with version property
+
 ## [Unreleased] - 2025-10-29
 
 ### Added

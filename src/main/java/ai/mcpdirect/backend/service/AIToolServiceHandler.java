@@ -111,6 +111,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
         public Long agentId;
         public Long makerId;
         public Integer status;
+        public long lastUpdated;
 
     }
     @ServiceRequestMapping("query")
@@ -119,7 +120,8 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceRequestMessage RequestOfQueryTools req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTool>> resp
     ) throws Exception {
-        resp.success(toolMapper.selectTools(req.userId==0?account.id:req.userId,req.status,req.agentId,req.makerId,req.name));
+        resp.success(toolMapper.selectTools(req.userId==0?account.id:req.userId,
+                req.status,req.agentId,req.makerId,req.name,req.lastUpdated));
     }
 
     public static class RequestOfGetTool{

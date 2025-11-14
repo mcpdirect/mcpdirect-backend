@@ -62,7 +62,7 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
 
     @Select("<script>SELECT " + SELECT_JOIN_FIELDS + " FROM " + TABLE_JOIN_NAME +
             " LEFT JOIN " + ToolAgentMapper.TABLE_JOIN_NAME + " ON t.agent_id=ta.id "+ """
-            WHERE t.user_id=#{userId}
+            WHERE t.user_id=#{userId} AND t.last_updated>#{lastUpdated}
             <if test="status!=null">AND t.status=#{status}</if>
             <if test="agentId!=null">AND t.agent_id=#{agentId}</if>
             <if test="makerId!=null">AND t.maker_id=#{makerId}</if>
@@ -72,5 +72,6 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
                                  @Param("status") Integer status,
                                  @Param("agentId")Long agentId,
                                  @Param("makerId")Long makerId,
-                                 @Param("name")String name);
+                                 @Param("name")String name,
+                                 @Param("lastUpdated")long lastUpdated);
 }
