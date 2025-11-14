@@ -43,16 +43,16 @@ public interface TeamMapper {
     @Select(selectTeam + "WHERE id = #{id}")
     AIPortTeam selectTeamById(@Param("id") long id);
 
-    @Select(selectTeam + "WHERE owner_id = #{ownerId}")
-    List<AIPortTeam> selectTeamsByOwnerId(@Param("ownerId") long ownerId);
+    @Select(selectTeam + "WHERE owner_id = #{ownerId} and last_updated>#{lastUpdated}")
+    List<AIPortTeam> selectTeamsByOwnerId(@Param("ownerId") long ownerId,@Param("lastUpdated")long lastUpdated);
 
     @Select(selectTeamJoin +",ua.account ownerAccount,u.name ownerName\n" +
             "FROM " + teamMemberTable + " tm\n" +
             "LEFT JOIN "+teamTable+" t on tm.team_id= t.id\n"+
             "LEFT JOIN "+AccountMapper.userAccountTable+" ua on ua.id=t.owner_id\n"+
             "LEFT JOIN "+AccountMapper.userTable+" u on u.id=t.owner_id\n"+
-            "WHERE tm.member_id = #{memberId}")
-    List<AIPortTeam>selectTeamsByMemberId(long memberId);
+            "WHERE tm.member_id = #{memberId} and t.last_updated>#{lastUpdated}")
+    List<AIPortTeam>selectTeamsByMemberId(@Param("memberId") long memberId,@Param("lastUpdated")long lastUpdated);
     @Insert("INSERT INTO " + teamTable +
             "(id, name, created, owner_id,status,last_updated) VALUES " +
             "(#{id}, #{name}, #{created}, #{ownerId}, #{status},#{lastUpdated})")

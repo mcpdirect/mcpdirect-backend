@@ -369,13 +369,18 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             resp.success(aiPortTeam);
         }
     }
+
+    public static class RequestOfQueryTeam{
+        public long lastUpdated;
+    }
     @ServiceRequestMapping("team/query")
     public void queryTeam(
             @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfQueryTeam req,
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTeam>> resp
     ){
-        List<AIPortTeam> list = new ArrayList<>(accountMapper.selectTeamsByOwnerId(account.id));
-        list.addAll(accountMapper.selectTeamsByMemberId(account.id));
+        List<AIPortTeam> list = new ArrayList<>(accountMapper.selectTeamsByOwnerId(account.id,req.lastUpdated));
+        list.addAll(accountMapper.selectTeamsByMemberId(account.id,req.lastUpdated));
         resp.success(list);
     }
 

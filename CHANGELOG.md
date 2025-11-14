@@ -3,6 +3,17 @@
 ## 2025-11-13
 
 ### Summary
+Updated team query functionality with last updated filter
+
+### Details
+- Added lastUpdated parameter to TeamMapper.selectTeamsByOwnerId and selectTeamsByMemberId methods to filter teams by last updated timestamp
+- Modified AccountServiceHandler to include lastUpdated filter in team queries
+- Added RequestOfQueryTeam class with lastUpdated field
+- Updated team query methods to use lastUpdated filter in WHERE clauses
+
+## 2025-11-13
+
+### Summary
 Updated AITool query functionality with last updated filter and version bump
 
 ### Details
