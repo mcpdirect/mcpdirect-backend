@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker.TYPE_MCP;
 
 
 @ServiceName("aitools.management")
@@ -38,7 +42,66 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
         accountMapper = AccountDataHelper.getInstance().getAccountMapper();
         toolMapper = helper.getAIToolMapper();
     }
-
+    public static class RequestOfPublishTools{
+        public long toolMakerId;
+        public long toolAgentId;
+        public List<AIPortTool> tools;
+    }
+    @ServiceRequestMapping("publish")
+    public void publishTools(
+            @ServiceRequestAuthentication("auk")
+            AIPortAccount account,
+            @ServiceRequestMessage RequestOfPublishTools req,
+            @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortTool>> resp
+    ) throws Exception {
+        AIPortToolAgent agent;
+        AIPortToolMaker maker;
+        if(req.toolMakerId>0&&req.toolAgentId>0&&req.tools!=null&&!req.tools.isEmpty()
+                && (agent = toolMapper.selectToolAgentById(req.toolAgentId))!=null
+                && agent.userId==account.id
+                && (maker=toolMapper.selectToolMakerById(req.toolMakerId))!=null
+                && maker.agentId==agent.id
+        ){
+            List<AIPortTool> tools = new ArrayList<>();
+            long now = System.currentTimeMillis();
+            boolean toolsUpdated = false;
+            Map<String,AIPortTool> oldTools = toolMapper.selectToolsByMakerId(req.toolMakerId).stream()
+                    .collect(Collectors.toMap(a -> a.name, a -> a));
+            for (AIPortTool tool : req.tools) if(tool.metaData!=null){
+                tool.agentStatus = agent.status;
+                tool.makerStatus = maker.status;
+                AIPortTool old = oldTools.get(tool.name);
+                try {
+                    if (old == null) {
+                        tool.id = ID.nextId();
+                        tool.userId = maker.userId;
+                        tool.makerId = req.toolMakerId;
+                        tool.makerStatus = 1;
+                        tool.agentId = agent.id;
+                        tool.agentStatus = agent.status;
+                        tool.lastUpdated = now;
+                        tool.status = 1;
+                        if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty()) tool.tags="";
+                        toolMapper.insertTool(tool);
+                        toolsUpdated = true;
+                    } else if (old.hash != tool.hash) {
+                        tool.id = old.id;
+                        tool.lastUpdated = now;
+                        toolMapper.updateToolMetaData(tool);
+                        toolsUpdated = true;
+                    }
+                    tools.add(tool);
+                } catch (Exception e) {
+                    LOG.warn("publishTools()",e);
+                }
+            }
+            if(toolsUpdated) {
+                engine.broadcast(USL.create("aitools@mcpdirect.ai/aitools/publish"),
+                        "{\"tools\":[{\"userId\":"+account.id+",\"lastUpdated\":"+now+"}]}");
+            }
+            resp.success(tools);
+        }
+    }
     public static class RequestOfGrantToolPermission{
         public List<AIPortToolPermission> permissions;
         public List<AIPortVirtualToolPermission> virtualPermissions;

@@ -3,6 +3,19 @@
 ## 2025-11-13
 
 ### Summary
+Added publishTools endpoint and updated hstp-service-engine dependency
+
+### Details
+- Updated hstp-service-engine dependency from version 1.5.0 to 1.5.1 in pom.xml
+- Added RequestOfPublishTools class for handling tool publishing requests
+- Implemented publishTools endpoint in AIToolServiceHandler to handle tool publishing with validation
+- Added logic to insert new tools or update existing tools based on hash comparison
+- Implemented broadcast functionality when tools are updated
+- Added imports for Map, Collectors, and TYPE_MCP constant
+
+## 2025-11-13
+
+### Summary
 Updated team query functionality with last updated filter
 
 ### Details
