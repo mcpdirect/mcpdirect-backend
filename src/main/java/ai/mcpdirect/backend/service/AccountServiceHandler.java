@@ -146,15 +146,16 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
             a.remove(new AccessKeyServiceHandler.RequestOfVerify(userId, userDevice, hstpAuth), ar);
             AIToolMapper aiToolMapper = AIToolDataHelper.getInstance().getAIToolMapper();
             AIPortToolAgent agent = aiToolMapper.selectToolAgentByEngineId(userId,request.getRequestEngineId());
-            boolean toolsUpdated = false;
+//            boolean toolsUpdated = false;
             if(agent!=null){
                 agent.status=0;
-                aiToolMapper.updateToolAgentStatus(agent);
-                toolsUpdated = aiToolMapper.updateToolAgentStatusOfTool(agent.id,agent.status)>0;
+//                aiToolMapper.updateToolAgentStatus(agent);
+//                toolsUpdated = aiToolMapper.updateToolAgentStatusOfTool(agent.id,agent.status)>0;
+                aiToolMapper.updateToolAgentLastKeepalive(agent.id,System.currentTimeMillis()|Long.MIN_VALUE);
             }
-            if(toolsUpdated) engine.broadcast(
-                    USL.create("aitools@mcpdirect.ai/aitools/publish"),
-                    "{\"tools\":[{\"userId\":"+userId+",\"lastUpdated\":"+System.currentTimeMillis()+"}]}");
+//            if(toolsUpdated) engine.broadcast(
+//                    USL.create("aitools@mcpdirect.ai/aitools/publish"),
+//                    "{\"tools\":[{\"userId\":"+userId+",\"lastUpdated\":"+System.currentTimeMillis()+"}]}");
 
             resp.success(ar.data);
         }

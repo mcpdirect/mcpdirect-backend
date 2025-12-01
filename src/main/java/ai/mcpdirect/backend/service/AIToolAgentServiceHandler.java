@@ -4,6 +4,7 @@ import ai.mcpdirect.backend.dao.AIToolDataHelper;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
 import ai.mcpdirect.backend.dao.entity.aitool.*;
 import ai.mcpdirect.backend.dao.mapper.aitool.AIToolMapper;
+import ai.mcpdirect.backend.dao.mapper.aitool.ToolAgentMapper;
 import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
 import appnet.hstp.annotation.*;
@@ -13,6 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker.TYPE_MCP;
@@ -23,7 +28,20 @@ import static ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker.TYPE_MCP;
 public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandler{
     private static final Logger LOG = LoggerFactory.getLogger(AIToolAgentServiceHandler.class);
     private static final USL publishBroadcastUSL = new USL("aitools","mcpdirect.ai","aitools/publish");
+    private static class ToolAgentKeepalive{
+        public long agentId;
+        public long lastKeepalive;
 
+        public ToolAgentKeepalive(long agentId, long lastKeepalive) {
+            this.agentId = agentId;
+            this.lastKeepalive = lastKeepalive;
+        }
+    }
+    private static final ConcurrentLinkedQueue<ToolAgentKeepalive> TOOL_AGENTS_KEEPALIVE = new ConcurrentLinkedQueue<>();
+    private static ScheduledExecutorService keepaliveService;
+    public static void setToolAgentsKeepalive(long agentId,long keepalive){
+        TOOL_AGENTS_KEEPALIVE.add(new ToolAgentKeepalive(agentId,keepalive));
+    }
     private AIToolDataHelper helper;
     private AIToolMapper toolMapper;
 
@@ -32,11 +50,27 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
         this.engine = engine;
         helper = AIToolDataHelper.getInstance();
         toolMapper = helper.getAIToolMapper();
-
+        keepaliveService = Executors.newSingleThreadScheduledExecutor();
+        keepaliveService.scheduleWithFixedDelay(()->{
+            try{
+                helper.executeSql((sqlSession)->{
+                    ToolAgentMapper mapper = sqlSession.getMapper(ToolAgentMapper.class);
+                    int count = 0;
+                    if(!TOOL_AGENTS_KEEPALIVE.isEmpty()){
+                        ToolAgentKeepalive keepalive;
+                        while(count<600&&(keepalive=TOOL_AGENTS_KEEPALIVE.poll())!=null){
+                            mapper.updateToolAgentLastKeepalive(keepalive.agentId,keepalive.lastKeepalive);
+                        }
+                    }
+                    return count;
+                });
+            } catch (Exception ignore) {
+            }
+        },0,3, TimeUnit.SECONDS);
     }
     public static class RequestOfPublishTools{
         public AIPortToolMaker maker;
-        public AIPortMCPServerConfig mcpServerConfig;
+//        public AIPortMCPServerConfig mcpServerConfig;
         public List<AIPortTool> tools;
     }
     @ServiceRequestMapping("tools/publish")
@@ -101,11 +135,11 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                 req.maker.lastUpdated = now;
                 toolMapper.insertToolMaker(req.maker);
                 m = req.maker;
-                if(m.type==TYPE_MCP&&req.mcpServerConfig!=null){
-                    req.mcpServerConfig.id = m.id;
-                    toolMapper.insertMCPServerConfig(req.mcpServerConfig);
-//                    toolsUpdated = true;
-                }
+//                if(m.type==TYPE_MCP&&req.mcpServerConfig!=null){
+//                    req.mcpServerConfig.id = m.id;
+//                    toolMapper.insertMCPServerConfig(req.mcpServerConfig);
+////                    toolsUpdated = true;
+//                }
                 try{
                     for (AIPortTool tool : req.tools) {
                         tool.id = ID.nextId();
@@ -160,7 +194,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
     public static class ToolAgentDetails {
         public AIPortToolAgent toolAgent;
         public List<AIPortToolMaker> makers;
-        public List<AIPortMCPServerConfig> mcpServerConfigs;
+//        public List<AIPortMCPServerConfig> mcpServerConfigs;
 
         public List<AIPortTool> tools;
     }
@@ -184,30 +218,44 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
             }
             agent = new AIPortToolAgent(
                     account.id,engineId, now,req.deviceId,
-                    req.device,req.name,req.tags,1
+                    req.device,req.name,req.tags,1,now
             );
             toolMapper.insertToolAgent(agent);
             toolAgentDetails.toolAgent =agent;
             resp.success(toolAgentDetails);
         }else{
-            agent.status=1;
-            toolMapper.updateToolAgentStatus(agent);
+//            agent.status=1;
+            agent.lastKeepalive = now;
+            toolMapper.updateToolAgentLastKeepalive(agent.id,now);
             boolean toolsUpdated = toolMapper.updateToolAgentStatusOfTool(agent.id,agent.status)>0;
-            if(toolsUpdated) engine.broadcast(
-                    USL.create("aitools@mcpdirect.ai/aitools/publish"),
-                    "{\"tools\":[{\"userId\":"+account.id+",\"lastUpdated\":"+now+"}]}");
+//            if(toolsUpdated) engine.broadcast(
+//                    USL.create("aitools@mcpdirect.ai/aitools/publish"),
+//                    "{\"tools\":[{\"userId\":"+account.id+",\"lastUpdated\":"+now+"}]}");
 
             toolAgentDetails.toolAgent = agent;
             toolAgentDetails.makers = toolMapper.selectToolMakerByAgentId(agent.id);
             if(!toolAgentDetails.makers.isEmpty()) {
                 List<Long> list = toolAgentDetails.makers.stream().map(m -> m.id).toList();
-                toolAgentDetails.mcpServerConfigs = toolMapper.selectMCPServerConfigByMakerIds(list);
+//                toolAgentDetails.mcpServerConfigs = toolMapper.selectMCPServerConfigByMakerIds(list);
                 toolAgentDetails.tools = toolMapper.selectToolsByMakerIds(list);
             }
             resp.success(toolAgentDetails);
         }
     }
-
+    @ServiceRequestMapping("keepalive")
+    public void keepalive(
+            ServiceRequest request,
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceResponseMessage SimpleServiceResponseMessage<Long> resp
+    ) throws Exception {
+        String engineId = request.getRequestEngineId();
+        AIPortToolAgent agent = toolMapper.selectToolAgentByEngineId(account.id, engineId);
+        if(agent!=null){
+            long now = System.currentTimeMillis();
+            setToolAgentsKeepalive(agent.id,now);
+            resp.success(now);
+        }
+    }
     public static class RequestOfModifyAgent{
         public long agentId;
         public String name;
@@ -263,7 +311,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
             toolAgentDetails.makers = toolMapper.selectToolMakerByAgentId(agent.id);
             if(!toolAgentDetails.makers.isEmpty()) {
                 List<Long> list = toolAgentDetails.makers.stream().map(m -> m.id).toList();
-                toolAgentDetails.mcpServerConfigs = toolMapper.selectMCPServerConfigByMakerIds(list);
+//                toolAgentDetails.mcpServerConfigs = toolMapper.selectMCPServerConfigByMakerIds(list);
                 toolAgentDetails.tools = toolMapper.selectToolsByMakerIds(list);
             }
             resp.success(toolAgentDetails);

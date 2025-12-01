@@ -9,13 +9,16 @@ import java.util.List;
 public interface ToolAgentMapper {
 
     String TABLE_NAME = "aitool.tool_agent";
-    String SELECT_FIELDS = "id, user_id userId, engine_id engineId, created, device, name, tags, status,device_id";
+    String SELECT_FIELDS = "id, user_id userId, engine_id engineId, created, device, name, tags, status,device_id,last_keepalive lastKeepalive";
 
     String TABLE_JOIN_NAME = "aitool.tool_agent ta";
 
-    @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status,device_id) " +
-            "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status},#{deviceId})")
+    @Insert("INSERT INTO " + TABLE_NAME + " (id, user_id, engine_id, created, device, name, tags, status,device_id,last_keepalive) " +
+            "VALUES (#{id}, #{userId}, #{engineId}, #{created}, #{device}, #{name}, #{tags}, #{status},#{deviceId},#{lastKeepalive})")
     void insertToolAgent(AIPortToolAgent toolAgent);
+
+    @Update("UPDATE " + TABLE_NAME + " SET last_keepalive = #{lastKeepalive} WHERE id = #{id}")
+    int updateToolAgentLastKeepalive(@Param("id")long agentId,@Param("lastKeepalive")long lastKeepalive);
 
     @Update("UPDATE " + TABLE_NAME + " SET status = #{status} WHERE id = #{id}")
     int updateToolAgentStatus(AIPortToolAgent agent);

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2025-12-01
+
+### Summary
+Bumped version to 2.2.0-SNAPSHOT and updated tool agent keepalive functionality
+
+### Details
+- Bumped project version from 2.1.2-SNAPSHOT to 2.2.0-SNAPSHOT in pom.xml
+- Added lastKeepalive field to AIPortToolAgent entity
+- Implemented scheduled keepalive service for tool agents
+- Added keepalive endpoint to AIToolAgentServiceHandler
+- Updated database schema and mapper interfaces for keepalive functionality
+- Removed MCPServerConfigMapper and related functionality
+- Updated virtual tool and permission queries with lastUpdated filter
+- Modified tool maker templates to exclude config field
+- Refactored tool agent status updates to use keepalive instead of status changes
+
 ## 2025-11-13
 
 ### Summary

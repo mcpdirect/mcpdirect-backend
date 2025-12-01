@@ -12,11 +12,11 @@ public class AIPortToolAgent {
     public String name;
     public String tags;
     public int status;
-
+    public long lastKeepalive;
     public AIPortToolAgent() {}
 
     public AIPortToolAgent(long userId, String engineId, long created,long deviceId,
-                           String device, String name, String tags, int status) {
+                           String device, String name, String tags, int status,long lastKeepalive) {
         this.id = ID.nextId();
         this.userId = userId;
         this.engineId = engineId;
@@ -26,5 +26,6 @@ public class AIPortToolAgent {
         this.name = name;
         this.tags = tags;
         this.status = status;
+        this.lastKeepalive = lastKeepalive;
     }
 }

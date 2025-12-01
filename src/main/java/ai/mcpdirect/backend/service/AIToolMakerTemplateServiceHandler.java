@@ -3,7 +3,6 @@ package ai.mcpdirect.backend.service;
 import ai.mcpdirect.backend.dao.AIToolDataHelper;
 import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.entity.account.AIPortAccount;
-import ai.mcpdirect.backend.dao.entity.account.AIPortTeam;
 import ai.mcpdirect.backend.dao.entity.account.AIPortTeamMember;
 import ai.mcpdirect.backend.dao.entity.aitool.*;
 import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
@@ -37,7 +36,7 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
     public static class RequestOfCreateToolMakerTemplate{
         public String name;
         public int type;
-        public String config;
+//        public String config;
         public String inputs;
         public long agentId;
     }
@@ -52,7 +51,7 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
         template.userId = account.id;
         template.name = req.name;
         template.type = req.type;
-        template.config = req.config;
+//        template.config = req.config;
         template.inputs = req.inputs;
         template.agentId = req.agentId;
         template.status = 1;
@@ -66,7 +65,7 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
         public long templateId;
         public String name;
         public Integer status;
-        public String config;
+//        public String config;
         public String inputs;
     }
     @ServiceRequestMapping("modify")
@@ -76,11 +75,11 @@ public class AIToolMakerTemplateServiceHandler extends ServiceRequestAuthenticat
             @ServiceRequestMessage RequestOfModifyToolMakerTemplate req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
     ){
-        if((req.name!=null||req.status!=null||req.config!=null||req.inputs!=null)
+        if((req.name!=null||req.status!=null||req.inputs!=null)
                 &&toolMapper.updateToolMakerTemplate(
                 req.templateId,account.id,
                 req.name,req.status,
-                req.config,req.inputs,
+                req.inputs,
                 System.currentTimeMillis())>0) {
             resp.success(toolMapper.selectToolMakerById(req.templateId));
         }

@@ -42,7 +42,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         public String name;
         public int type;
         public String tags;
-        public AIPortMCPServerConfig mcpServerConfig;
+//        public AIPortMCPServerConfig mcpServerConfig;
     }
     @ServiceRequestMapping("create")
     public void createToolMaker(
@@ -51,19 +51,23 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
             @ServiceRequestMessage RequestOfCreateToolMaker req,
             @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
     ){
+        if(req.userId<Integer.MAX_VALUE){
+            req.userId = account.id;
+        }
         AIPortToolMaker maker = new AIPortToolMaker();
         maker.id = ID.nextId();
-        maker.userId = account.id;
+//        maker.userId = account.id;
+        maker.userId = req.userId;
         maker.name(req.name);
         maker.tags(req.tags);
 
         if(req.type != AIPortToolMaker.TYPE_VIRTUAL) {
-            if(req.type == AIPortToolMaker.TYPE_MCP&&req.mcpServerConfig==null){
-                return;
-            }
+//            if(req.type == AIPortToolMaker.TYPE_MCP&&req.mcpServerConfig==null){
+//                return;
+//            }
             AIPortToolAgent agent;
             if(req.templateId>Integer.MAX_VALUE) {
-                maker.userId = req.userId;
+//                maker.userId = req.userId;
                 maker.templateId = req.templateId;
                 agent = toolMapper.selectToolAgentById(req.agentId);
             } else agent = toolMapper.selectToolAgentByEngineId(account.id, request.getRequestEngineId());
@@ -81,10 +85,10 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         maker.lastUpdated = maker.created;
         toolMapper.insertToolMaker(maker);
 
-        if(req.type==AIPortToolMaker.TYPE_MCP){
-            req.mcpServerConfig.id = maker.id;
-            toolMapper.insertMCPServerConfig(req.mcpServerConfig);
-        }
+//        if(req.type==AIPortToolMaker.TYPE_MCP){
+//            req.mcpServerConfig.id = maker.id;
+//            toolMapper.insertMCPServerConfig(req.mcpServerConfig);
+//        }
         resp.success(maker);
     }
 
@@ -165,7 +169,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
     public static class ToolMakerDetails{
         public AIPortToolMaker maker;
-        public AIPortMCPServerConfig config;
+//        public AIPortMCPServerConfig config;
         public List<AIPortTool> tools;
     }
     @ServiceRequestMapping("details/get")
@@ -182,7 +186,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         if(details.maker==null){
             return;
         }
-        details.config = toolMapper.selectMCPServerConfigById(req.makerId);
+//        details.config = toolMapper.selectMCPServerConfigById(req.makerId);
         details.tools = toolMapper.selectToolsByMakerId(req.makerId);
 
         resp.success(details);
@@ -259,34 +263,34 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     public static class RequestOfGetMCPServerConfig{
         public long configId;
     }
-    @ServiceRequestMapping("mcp_server_config/get")
-    public void getMCPServerConfig(
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfGetMCPServerConfig req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortMCPServerConfig> resp
-    ) throws Exception {
-        if(req.configId<Integer.MAX_VALUE){
-            return;
-        }
-        resp.success(toolMapper.selectMCPServerConfigById(req.configId));
-    }
-
-    public static class RequestOfModifyMCPServerConfig{
-        public AIPortMCPServerConfig mcpServerConfig;
-    }
-
-    @ServiceRequestMapping("mcp_server_config/modify")
-    public void modifyMCPServerConfig(
-            @ServiceRequestAuthentication("auk") AIPortAccount account,
-            @ServiceRequestMessage RequestOfModifyMCPServerConfig req,
-            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
-    ) throws Exception {
-        AIPortToolMaker maker;
-        if(req.mcpServerConfig!=null&&req.mcpServerConfig.id>Integer.MAX_VALUE
-                &&(maker=toolMapper.selectToolMakerById(req.mcpServerConfig.id))!=null
-                &&maker.userId==account.id){
-            toolMapper.updateMCPServerConfig(req.mcpServerConfig);
-            resp.success(maker);
-        }
-    }
+//    @ServiceRequestMapping("mcp_server_config/get")
+//    public void getMCPServerConfig(
+//            @ServiceRequestAuthentication("auk") AIPortAccount account,
+//            @ServiceRequestMessage RequestOfGetMCPServerConfig req,
+//            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortMCPServerConfig> resp
+//    ) throws Exception {
+//        if(req.configId<Integer.MAX_VALUE){
+//            return;
+//        }
+//        resp.success(toolMapper.selectMCPServerConfigById(req.configId));
+//    }
+//
+//    public static class RequestOfModifyMCPServerConfig{
+//        public AIPortMCPServerConfig mcpServerConfig;
+//    }
+//
+//    @ServiceRequestMapping("mcp_server_config/modify")
+//    public void modifyMCPServerConfig(
+//            @ServiceRequestAuthentication("auk") AIPortAccount account,
+//            @ServiceRequestMessage RequestOfModifyMCPServerConfig req,
+//            @ServiceResponseMessage SimpleServiceResponseMessage<AIPortToolMaker> resp
+//    ) throws Exception {
+//        AIPortToolMaker maker;
+//        if(req.mcpServerConfig!=null&&req.mcpServerConfig.id>Integer.MAX_VALUE
+//                &&(maker=toolMapper.selectToolMakerById(req.mcpServerConfig.id))!=null
+//                &&maker.userId==account.id){
+//            toolMapper.updateMCPServerConfig(req.mcpServerConfig);
+//            resp.success(maker);
+//        }
+//    }
 }

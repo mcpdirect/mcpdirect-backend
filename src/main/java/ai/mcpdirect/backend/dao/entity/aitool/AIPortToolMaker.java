@@ -17,10 +17,10 @@ public class AIPortToolMaker {
     public String name;
     public String tags;
     public long agentId;
-    public int agentStatus;
-    public String agentName;
+//    public int agentStatus;
+//    public String agentName;
     public long userId;
-    public long teamId;
+//    public long teamId;
     public long templateId;
 
     public AIPortToolMaker name(String name){

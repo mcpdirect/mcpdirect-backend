@@ -1,6 +1,7 @@
 package ai.mcpdirect.backend.service;
 
 import ai.mcpdirect.backend.dao.entity.aitool.*;
+import ai.mcpdirect.backend.dao.mapper.aitool.VirtualToolMapper;
 import ai.mcpdirect.backend.util.ID;
 import appnet.hstp.*;
 import appnet.hstp.annotation.*;
@@ -18,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker.TYPE_MCP;
 
 
 @ServiceName("aitools.management")
@@ -210,25 +209,35 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortVirtualTool>> resp
     ) throws Exception {
         if(req.makerId>0&&req.tools!=null) {
-            for (AIPortVirtualTool tool : req.tools) {
-                tool.makerId = req.makerId;
-                tool.lastUpdated = System.currentTimeMillis();
-                if (tool.id == 0 && tool.toolId > 0) {
-                    tool.id = ID.nextId();
-                    tool.status = 1;
-                    tool.makerStatus = 1;
-                    tool.userId = account.id;
-                    toolMapper.insertVirtualTool(tool);
-                } else if (tool.id > 0) {
-                    toolMapper.updateVirtualToolStatus(tool);
+            resp.success(helper.executeSql((sqlSession -> {
+                List<AIPortVirtualTool> list = new ArrayList<>();
+                VirtualToolMapper mapper = sqlSession.getMapper(VirtualToolMapper.class);
+                for (AIPortVirtualTool tool : req.tools) {
+                    tool.makerId = req.makerId;
+                    tool.lastUpdated = System.currentTimeMillis();
+                    if (tool.id == 0 && tool.toolId > 0) {
+                        tool.id = ID.nextId();
+                        tool.status = 1;
+                        tool.makerStatus = 1;
+                        tool.userId = account.id;
+                        mapper.insertVirtualTool(tool);
+                    } else if (tool.id > 0) {
+                        mapper.updateVirtualToolStatus(tool);
+                    }
+                    list.add(tool);
                 }
-            }
-            resp.success(toolMapper.selectVirtualToolByMakerId(req.makerId));
+                return list;
+            })));
+
+//            resp.success(toolMapper.selectVirtualToolsByMakerId(req.makerId));
+//            resp.success(req.tools);
         }
     }
 
     public static class RequestOfQueryVirtualTools{
+        public long userId;
         public long makerId;
+        public long lastUpdated;
     }
     @ServiceRequestMapping("virtual/query")
     public void queryVirtualTools(
@@ -237,14 +246,16 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortVirtualTool>> resp
     ) throws Exception {
         if(req.makerId>0) {
-            resp.success(toolMapper.selectVirtualToolByMakerId(req.makerId));
+            resp.success(toolMapper.selectVirtualToolsByMakerId(req.makerId, req.lastUpdated));
         }else{
-            resp.success(toolMapper.selectVirtualTools(account.id));
+            resp.success(toolMapper.selectVirtualTools(
+                    req.userId<Integer.MAX_VALUE?account.id:req.userId,req.lastUpdated));
         }
     }
 
     public static class RequestOfQueryToolPermissions{
         public long accessKeyId;
+        public long lastUpdated;
     }
     @ServiceRequestMapping("permission/query")
     public void queryToolPermissions(
@@ -253,7 +264,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
             @ServiceResponseMessage SimpleServiceResponseMessage<List<AIPortToolPermission>> resp
     ) throws Exception {
         if(req.accessKeyId>0) {
-            resp.success(toolMapper.selectToolPermissionByAccessKey(account.id,req.accessKeyId));
+            resp.success(toolMapper.selectToolPermissionByAccessKey(account.id,req.accessKeyId,req.lastUpdated));
         }
     }
 

@@ -60,8 +60,10 @@ public interface ToolPermissionMapper {
 
     @Select("SELECT " + SELECT_JOIN_FIELDS + ",t.name,t.agent_id agentId,t.maker_id makerId FROM " + TABLE_JOIN_NAME +"\n"+
             "LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON tp.tool_id = t.id\n" +
-            " WHERE tp.user_id = #{userId} AND tp.access_key_id = #{accessKeyId}")
-    List<AIPortToolPermission> selectToolPermissionByAccessKey(@Param("userId") long userId, @Param("accessKeyId") long accessKeyId);
+            " WHERE tp.user_id = #{userId} AND tp.access_key_id = #{accessKeyId} AND tp.last_updated>#{lastUpdated}")
+    List<AIPortToolPermission> selectToolPermissionByAccessKey(
+            @Param("userId") long userId, @Param("accessKeyId") long accessKeyId, @Param("lastUpdated") long lastUpdated
+    );
 
     @Select("SELECT " + SELECT_JOIN_FIELDS_V + ",t.name,vt.maker_id makerId FROM " + TABLE_JOIN_NAME_V +"\n"+
             "LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON tp.original_tool_id = t.id\n" +

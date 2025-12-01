@@ -9,6 +9,6 @@ public class AIPortToolMakerTemplate {
     public long agentId;
     public long lastUpdated;
     public long userId;
-    public String config;
+//    public String config;
     public String inputs;
 }

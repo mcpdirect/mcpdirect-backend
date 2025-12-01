@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAgentMapper,
-        MCPServerConfigMapper, ToolMakerMapper,ToolPermissionMapper,VirtualToolMapper,
+        /*MCPServerConfigMapper,*/ ToolMakerMapper,ToolPermissionMapper,VirtualToolMapper,
         VirtualToolPermissionMapper, TeamToolMakerMapper,ToolMakerTemplateMapper,
         TeamToolMakerTemplateMapper{
 

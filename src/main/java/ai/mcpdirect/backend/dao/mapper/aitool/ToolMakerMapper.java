@@ -73,9 +73,19 @@ public interface ToolMakerMapper {
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE agent_id = #{agentId}")
     List<AIPortToolMaker> selectToolMakerByAgentId(@Param("agentId") long agentId);
 
-    @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
-            ",ta.status agentStatus,ta.name agentName FROM " + TABLE_JOIN_NAME + "\n" +
-            "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
+//    @Select("<script>SELECT " + SELECT_JOIN_FIELDS +
+//            ",ta.status agentStatus,ta.name agentName FROM " + TABLE_JOIN_NAME + "\n" +
+//            "LEFT JOIN "+ToolAgentMapper.TABLE_JOIN_NAME +" on tm.agent_id = ta.id\n"+
+//            "WHERE tm.user_id = #{userId} and tm.last_updated>#{lastUpdated}\n" +
+//            "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
+//            "<if test=\"type!=null\">and tm.type=#{type}</if>" +
+//            "<if test=\"name!=null\">and LOWER(tm.name) LIKE CONCAT('%', #{name}, '%')</if>" +
+//            "</script>")
+//    List<AIPortToolMaker> selectToolMakersByUserId(@Param("userId") long userId, @Param("name")String name,
+//                                                   @Param("type") Integer type, @Param("agentId")Long agentId,
+//                                                   @Param("lastUpdated")long lastUpdated);
+
+    @Select("<script>SELECT " + SELECT_JOIN_FIELDS + " FROM " + TABLE_JOIN_NAME + "\n" +
             "WHERE tm.user_id = #{userId} and tm.last_updated>#{lastUpdated}\n" +
             "<if test=\"agentId!=null\">and tm.agent_id=#{agentId}</if>" +
             "<if test=\"type!=null\">and tm.type=#{type}</if>" +
@@ -84,7 +94,6 @@ public interface ToolMakerMapper {
     List<AIPortToolMaker> selectToolMakersByUserId(@Param("userId") long userId, @Param("name")String name,
                                                    @Param("type") Integer type, @Param("agentId")Long agentId,
                                                    @Param("lastUpdated")long lastUpdated);
-
 
 
 //    @Select("<script> SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME +
@@ -107,14 +116,14 @@ public interface ToolMakerMapper {
                                 #{item}
                                 </foreach></script>""")
     List<AIPortToolMaker> selectToolMakerByIds(@Param("makerIds") List<Long> makerIds);
-    @Select("SELECT " + SELECT_JOIN_FIELDS +",ttm.team_id teamId\n" +
+    @Select("SELECT " + SELECT_JOIN_FIELDS+ "\n" +/*",ttm.team_id teamId\n" +*/
             "FROM "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm\n" +
             "LEFT JOIN "+TABLE_JOIN_NAME+" on tm.id=ttm.tool_maker_id and tm.last_updated>#{lastUpdated}\n" +
             "WHERE ttm.team_id=#{teamId}")
     List<AIPortToolMaker> selectToolMakersByTeamId(@Param("teamId") long teamId,
                                                    @Param("lastUpdated")long lastUpdated);
 
-    @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
+    @Select("SELECT " + SELECT_JOIN_FIELDS+ "\n"  +/*",atm.team_id teamId\n" +*/
             "FROM "+TeamMapper.teamMemberTable+" atm\n" +
             "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
             "JOIN "+TABLE_JOIN_NAME+" on tm.user_id<>#{userId} AND ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
@@ -122,7 +131,7 @@ public interface ToolMakerMapper {
     List<AIPortToolMaker> selectToolMakersByTeamMemberId(@Param("userId") long userId,
                                                          @Param("lastUpdated")long lastUpdated);
 
-    @Select("SELECT " + SELECT_JOIN_FIELDS +",atm.team_id teamId\n" +
+    @Select("SELECT " + SELECT_JOIN_FIELDS+ "\n"  +/*",atm.team_id teamId\n" +*/
             "FROM "+TeamMapper.teamMemberTable+" atm\n" +
             "JOIN "+TeamToolMakerMapper.TEAM_TOOL_MAKER_TABLE+" ttm on atm.team_id = ttm.team_id\n" +
             "JOIN "+TABLE_JOIN_NAME+" on ttm.tool_maker_id = tm.id and tm.last_updated>#{lastUpdated}\n" +
