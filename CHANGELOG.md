@@ -3,6 +3,25 @@
 ## 2025-12-01
 
 ### Summary
+Added tool access key functionality and refactored entity classes
+
+### Details
+- Added AIPortToolAccessKey and AIPortToolAccessKeyCredential entity classes
+- Added AIPortToolStub and AIPortToolMakerStub entity classes for inheritance
+- Refactored AIPortTool to extend AIPortToolStub and AIPortToolMaker to extend AIPortToolMakerStub
+- Added ToolAccessKeyMapper interface for access key database operations
+- Created AIToolAccessKeyServiceHandler for managing tool access keys
+- Changed service path from /account/ to /tool_access_key/ for access key operations
+- Updated AIPortServiceResponse with new error codes
+- Refactored access key operations to use AIToolDataHelper instead of AccountDataHelper
+- Removed userRoles field from AIPortToolAccessKey entity
+- Added removeToolMakerDetails functionality with proper validation
+- Updated access key creation to use toolMapper instead of accountMapper
+- Removed unnecessary inheritance from AIPortToolAccessKeyCredential
+
+## 2025-12-01
+
+### Summary
 Bumped version to 2.2.0-SNAPSHOT and updated tool agent keepalive functionality
 
 ### Details

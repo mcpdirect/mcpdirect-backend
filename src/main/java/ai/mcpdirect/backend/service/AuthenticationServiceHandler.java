@@ -8,8 +8,8 @@ import ai.mcpdirect.backend.dao.AccountDataHelper;
 import ai.mcpdirect.backend.dao.mapper.account.AccountMapper;
 
 import static ai.mcpdirect.backend.dao.entity.AIPortSystemProperty.*;
-import static ai.mcpdirect.backend.service.AccountServiceErrors.OTP_EXPIRED;
-import static ai.mcpdirect.backend.service.AccountServiceErrors.OTP_FAILED;
+import static ai.mcpdirect.backend.service.AIPortServiceResponse.OTP_EXPIRED;
+import static ai.mcpdirect.backend.service.AIPortServiceResponse.OTP_FAILED;
 
 import appnet.hstp.ServiceEngine;
 import appnet.hstp.SimpleServiceResponseMessage;
@@ -46,7 +46,7 @@ public class AuthenticationServiceHandler {
                 resp.message = "invalid account";
             } else if (accountMapper.checkUserAccount(req.account)>0) {
                 resp.message = "account existed";
-                resp.code = AccountServiceErrors.ACCOUNT_EXISTED;
+                resp.code = AIPortServiceResponse.ACCOUNT_EXISTED;
             } else {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
@@ -150,7 +150,7 @@ public class AuthenticationServiceHandler {
                 resp.message = "invalid account";
             } else if ((account=accountMapper.selectUserAccount(req.account))==null) {
                 resp.message = "account not existed";
-                resp.code = AccountServiceErrors.ACCOUNT_NOT_EXIST;
+                resp.code = AIPortServiceResponse.ACCOUNT_NOT_EXIST;
             } else {
                 int otpDuration = helper.getIntSystemProperty(OTP_EFFECTIVE_DURATION, 600000);
                 resp.data = new AIPortOtp();
@@ -250,7 +250,7 @@ public class AuthenticationServiceHandler {
             @ServiceResponseMessage SimpleServiceResponseMessage<AccountDetails> resp) throws Exception {
         int userDevice = aiportDevice!=null?aiportDevice.hashCode():0;
         if (req.account == null) {
-            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
+            resp.code = AIPortServiceResponse.SIGN_IN_FAILED;
             return;
         }
         resp.data = new AccountDetails();
@@ -278,7 +278,7 @@ public class AuthenticationServiceHandler {
             }
         }
         if (resp.data.accessToken == null) {
-            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
+            resp.code = AIPortServiceResponse.SIGN_IN_FAILED;
         }
     }
 
@@ -294,7 +294,7 @@ public class AuthenticationServiceHandler {
             @ServiceResponseMessage SimpleServiceResponseMessage<AccountDetails> resp) throws Exception {
         int userDevice = aiportDevice!=null?aiportDevice.hashCode():0;
         if (req.id == 0) {
-            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
+            resp.code = AIPortServiceResponse.SIGN_IN_FAILED;
             resp.message = "invalid account info";
             return;
         }
@@ -323,7 +323,7 @@ public class AuthenticationServiceHandler {
             }
         }
         if (resp.data.accessToken == null) {
-            resp.code = AccountServiceErrors.SIGN_IN_FAILED;
+            resp.code = AIPortServiceResponse.SIGN_IN_FAILED;
         }
     }
 

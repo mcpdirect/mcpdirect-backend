@@ -81,6 +81,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
                         tool.lastUpdated = now;
                         tool.status = 1;
                         if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty()) tool.tags="";
+                        toolMapper.insertToolStub(tool);
                         toolMapper.insertTool(tool);
                         toolsUpdated = true;
                     } else if (old.hash != tool.hash) {

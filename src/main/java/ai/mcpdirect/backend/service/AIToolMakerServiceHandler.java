@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ai.mcpdirect.backend.service.AIPortServiceResponse.TOOL_MAKER_NOT_EXISTS;
+import static ai.mcpdirect.backend.service.AIPortServiceResponse.TOOL_MAKER_OCCUPIED;
+
 
 @ServiceName("aitools.management")
 @ServiceRequestMapping("/tool_maker/")
@@ -83,6 +86,7 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         maker.status = 1;
         maker.created = System.currentTimeMillis();
         maker.lastUpdated = maker.created;
+        toolMapper.insertToolMakerStub(maker);
         toolMapper.insertToolMaker(maker);
 
 //        if(req.type==AIPortToolMaker.TYPE_MCP){
@@ -90,6 +94,44 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
 //            toolMapper.insertMCPServerConfig(req.mcpServerConfig);
 //        }
         resp.success(maker);
+    }
+
+    @ServiceRequestMapping("remove")
+    public void removeToolMakerDetails(
+            @ServiceRequestAuthentication("auk") AIPortAccount account,
+            @ServiceRequestMessage RequestOfGetToolMakerDetails req,
+            @ServiceResponseMessage AIPortServiceResponse<AIPortToolMaker> resp
+    ){
+        AIPortToolMaker toolMaker;
+        List<Long> accessKeys = List.of();
+        List<Long> virtualToolMakers=List.of();
+        if(req.makerId<Integer.MAX_VALUE||(toolMaker= toolMapper.selectToolMakerById(req.makerId))==null){
+            resp.code = TOOL_MAKER_NOT_EXISTS;
+            return;
+        }
+        if(toolMaker.type==AIPortToolMaker.TYPE_VIRTUAL){
+            accessKeys = toolMapper.selectAccessKeyFromVirtualToolPermissionsByToolMakerId(req.makerId);
+        }else {
+            accessKeys = toolMapper.selectAccessKeyFromToolPermissionsByToolMakerId(req.makerId);
+            if (accessKeys.isEmpty()) {
+                virtualToolMakers = toolMapper.selectVirtualToolMakersFromVirtualToolsByOriginalToolMakerId(req.makerId);
+            }
+        }
+        if(!accessKeys.isEmpty()||!virtualToolMakers.isEmpty()){
+            resp.code = TOOL_MAKER_OCCUPIED;
+            resp.message = "{\"toolAccessKeys\":"+accessKeys+",\"virtualToolMakers\":"+virtualToolMakers+"}";
+        }else {
+            if (toolMaker.type == AIPortToolMaker.TYPE_VIRTUAL) {
+                toolMapper.deleteVirtaulToolsByMakerId(req.makerId);
+            } else {
+                long now = System.currentTimeMillis();
+                toolMapper.updateToolStubRemovedByToolMakerId(req.makerId,now);
+                toolMapper.deleteToolsByMakerId(req.makerId);
+                toolMapper.updateToolMakerStubRemovedByToolMakerId(req.makerId,now);
+            }
+            toolMapper.deleteToolMaker(req.makerId);
+            resp.success(toolMaker);
+        }
     }
 
     public static class RequestOfModifyToolMaker{
@@ -142,16 +184,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         if(req.name!=null&&(req.name = req.name.trim()).isEmpty()){
             req.name = null;
         }
-//        if(req.type==null||req.type==0){
-//            list.addAll(toolMapper.selectVirtualToolMakerByUserId(account.id,req.name,req.lastUpdated));
-//        }
-//        if(req.type==null||req.type>0){
-//            if(req.type!=null&&req.type==Integer.MAX_VALUE){
-//                req.type = null;
-//            }
-//            list.addAll(toolMapper.selectToolMakersByUserId(account.id,req.name,req.type,
-//                    req.toolAgentId,req.lastUpdated));
-//        }
         List<AIPortToolMaker> list = new ArrayList<>(
                 toolMapper.selectToolMakersByUserId(account.id, req.name, req.type,
                         req.toolAgentId, req.lastUpdated));
@@ -169,7 +201,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
     }
     public static class ToolMakerDetails{
         public AIPortToolMaker maker;
-//        public AIPortMCPServerConfig config;
         public List<AIPortTool> tools;
     }
     @ServiceRequestMapping("details/get")
@@ -186,7 +217,6 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         if(details.maker==null){
             return;
         }
-//        details.config = toolMapper.selectMCPServerConfigById(req.makerId);
         details.tools = toolMapper.selectToolsByMakerId(req.makerId);
 
         resp.success(details);

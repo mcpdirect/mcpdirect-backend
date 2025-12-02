@@ -1,6 +1,7 @@
 package ai.mcpdirect.backend.dao.mapper.aitool;
 
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortTool;
+import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolStub;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -9,7 +10,8 @@ import java.util.List;
 public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAgentMapper,
         /*MCPServerConfigMapper,*/ ToolMakerMapper,ToolPermissionMapper,VirtualToolMapper,
         VirtualToolPermissionMapper, TeamToolMakerMapper,ToolMakerTemplateMapper,
-        TeamToolMakerTemplateMapper{
+        TeamToolMakerTemplateMapper,ToolAccessKeyMapper{
+    String TABLE_NAME_STUB = "aitool.tool_stub";
 
     String TABLE_NAME = "aitool.tool";
     String SELECT_FIELDS = """
@@ -28,6 +30,13 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
             t.agent_status agentStatus,
             t.maker_status makerStatus,usage""";
 
+    @Insert("INSERT INTO " + TABLE_NAME_STUB + " (id,user_id, maker_id, name) " +
+            "VALUES (#{id},#{userId}, #{makerId}, #{name})")
+    int insertToolStub(AIPortToolStub tool);
+
+    @Update("UPDATE "+TABLE_NAME_STUB+" SET removed=#{removed} WHERE maker_id=#{toolMakerId}")
+    int updateToolStubRemovedByToolMakerId(@Param("toolMakerId")long toolMakerId,@Param("removed")long removed);
+
     @Insert("INSERT INTO " + TABLE_NAME + " (id,user_id, maker_id, status, last_updated, name, tags, hash, meta_data,agent_id,agent_status,maker_status) " +
             "VALUES (#{id},#{userId}, #{makerId}, #{status}, #{lastUpdated}, #{name}, #{tags}, #{hash}, #{metaData}," +
             "#{agentId}, #{agentStatus}, #{makerStatus})")
@@ -44,6 +53,9 @@ public interface AIToolMapper extends ToolProviderMapper, ToolAppMapper, ToolAge
 
     @Delete("DELETE FROM " + TABLE_NAME + " WHERE maker_id=#{makerId}")
     int deleteToolsByMakerId(long makerId);
+
+    @Delete("DELETE FROM " + TABLE_NAME_V + " WHERE maker_id=#{makerId}")
+    int deleteVirtaulToolsByMakerId(long makerId);
 
     @Select("SELECT " + SELECT_FIELDS + ",meta_data metaData FROM " + TABLE_NAME + " WHERE id = #{id}")
     AIPortTool selectToolById(long id);

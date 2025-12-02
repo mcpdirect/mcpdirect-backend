@@ -35,4 +35,14 @@ public interface VirtualToolMapper {
             " LEFT JOIN "+AIToolMapper.TABLE_JOIN_NAME+" ON t.id=vt.tool_id\n"+
             " WHERE vt.user_id=#{userId} AND vt.status>-1 AND vt.last_updated>#{lastUpdated}")
     List<AIPortVirtualTool> selectVirtualTools(@Param("userId")long userId,@Param("lastUpdated")long lastUpdated);
+
+    @Select("""
+            select vt.maker_id from aitool.virtual_tool vt\s
+            WHERE EXISTS (
+                SELECT 1 FROM aitool.tool t
+                WHERE vt.tool_id  = t.id\
+                AND t.maker_id = #{toolMakerId}
+            )
+            group by vt.maker_id""")
+    List<Long> selectVirtualToolMakersFromVirtualToolsByOriginalToolMakerId(@Param("toolMakerId")long toolMakerId);
 }

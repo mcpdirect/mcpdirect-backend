@@ -108,6 +108,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                             tool.status = 1;
                             if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty())
                                 tool.tags="";
+                            toolMapper.insertToolStub(tool);
                             toolMapper.insertTool(tool);
                             toolsUpdated = true;
                         } else if (old.hash != tool.hash) {
@@ -133,6 +134,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                 req.maker.created = now;
                 req.maker.userId = account.id;
                 req.maker.lastUpdated = now;
+                toolMapper.insertToolMakerStub(req.maker);
                 toolMapper.insertToolMaker(req.maker);
                 m = req.maker;
 //                if(m.type==TYPE_MCP&&req.mcpServerConfig!=null){
@@ -153,6 +155,7 @@ public class AIToolAgentServiceHandler extends ServiceRequestAuthenticationHandl
                         if(tool.tags==null||(tool.tags=tool.tags.trim()).isEmpty()||
                                 !tool.tags.startsWith("[")||!tool.tags.endsWith("]"))
                             tool.tags="[]";
+                        toolMapper.insertToolStub(tool);
                         toolMapper.insertTool(tool);
                     }
                 }catch (Exception e){}

@@ -47,6 +47,18 @@ public interface ToolPermissionMapper {
             """)
     int deleteToolPermissionsByIdList(@Param("toolIdList")List<Long> idList);
 
+    @Select("""
+            SELECT tp.access_key_id
+            FROM aitool.tool_permission tp
+            WHERE EXISTS (
+                SELECT 1 FROM aitool.tool t
+                WHERE t.id = tp.tool_id
+                AND t.maker_id = #{toolMakerId}
+            )
+            group by tp.access_key_id""")
+
+    List<Long> selectAccessKeyFromToolPermissionsByToolMakerId(@Param("toolMakerId")long toolMakerId);
+
     @Delete("<script>DELETE FROM " + TABLE_NAME_V + """
             WHERE tool_id IN
             <foreach item='item' index='index' collection='toolIdLists' open='(' separator=', ' close=')'>
@@ -54,6 +66,17 @@ public interface ToolPermissionMapper {
             </foreach></script>
             """)
     int deleteVirtualToolPermissionsByIdList(@Param("toolIdList")List<Long> idList);
+
+    @Select("""
+            SELECT tp.access_key_id
+            FROM aitool.virtual_tool_permission tp
+            WHERE EXISTS (
+                SELECT 1 FROM aitool.virtual_tool t
+                WHERE t.id = tp.tool_id
+                AND t.maker_id = #{toolMakerId}
+            )
+            group by tp.access_key_id""")
+    List<Long> selectAccessKeyFromVirtualToolPermissionsByToolMakerId(@Param("toolMakerId")long toolMakerId);
 
     @Select("SELECT " + SELECT_FIELDS + " FROM " + TABLE_NAME + " WHERE user_id = #{userId} AND access_key_id = #{accessKeyId} AND tool_id = #{toolId}")
     AIPortToolPermission selectToolPermission(@Param("userId") long userId, @Param("accessKeyId") int accessKeyId, @Param("toolId") long toolId);

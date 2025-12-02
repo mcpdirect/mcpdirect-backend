@@ -1,6 +1,7 @@
 package ai.mcpdirect.backend.dao.mapper.aitool;
 
 import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMaker;
+import ai.mcpdirect.backend.dao.entity.aitool.AIPortToolMakerStub;
 import ai.mcpdirect.backend.dao.mapper.account.TeamMapper;
 import org.apache.ibatis.annotations.*;
 
@@ -9,6 +10,7 @@ import java.util.List;
 //@Mapper
 public interface ToolMakerMapper {
 
+    String TABLE_NAME_STUB = "aitool.tool_maker_stub";
     String TABLE_NAME = "aitool.tool_maker";
 //    String SELECT_FIELDS = "id, created, status, last_updated lastUpdated, hash, tools, type, name, tags, agent_id agentId";
     String SELECT_FIELDS = "id, created, status, last_updated lastUpdated,type, name, tags, agent_id agentId,user_id userId,template_id templateId";
@@ -17,11 +19,12 @@ public interface ToolMakerMapper {
     String SELECT_JOIN_FIELDS = "tm.id, tm.created, tm.status, tm.last_updated lastUpdated,tm.type, tm.name, tm.tags," +
             "tm.agent_id agentId, tm.user_id userId,tm.template_id templateId";
 
-//    @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, hash, tools, type, name, tags, agent_id) " +
-//            "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{hash}, #{tools}, #{type}, #{name}, #{tags}, #{agentId})")
+    @Insert("INSERT INTO " + TABLE_NAME_STUB + " (id, created, type, name, agent_id,user_id) " +
+            "VALUES (#{id}, #{created}, #{type}, #{name}, #{agentId},#{userId})")
+    void insertToolMakerStub(AIPortToolMakerStub toolsMaker);
+
     @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id,user_id,template_id) " +
             "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId},#{userId},#{templateId})")
-
     void insertToolMaker(AIPortToolMaker toolsMaker);
 
     @Update("UPDATE " + TABLE_NAME + " SET status = #{status},last_updated=#{lastUpdated} WHERE id = #{id}")
@@ -42,6 +45,9 @@ public interface ToolMakerMapper {
             "</trim> " +
             "WHERE id = #{id}")
     int updateToolMaker(@Param("id")long id,@Param("name")String name,@Param("tags")String tags,@Param("status")Integer status);
+
+    @Update("UPDATE " + TABLE_NAME_STUB + " SET removed = #{removed} WHERE id = #{id}")
+    int updateToolMakerStubRemovedByToolMakerId(@Param("id")long id,@Param("removed")long removed);
 
     @Delete("DELETE FROM " + TABLE_NAME + " WHERE id = #{id}")
     int deleteToolMaker(@Param("id")long id);

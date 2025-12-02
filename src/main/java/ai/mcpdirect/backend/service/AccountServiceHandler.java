@@ -21,10 +21,11 @@ import ai.mcpdirect.backend.util.AIPortAccessKeyGenerator;
 import ai.mcpdirect.backend.util.AIPortAccessKeyValidator;
 
 import static ai.mcpdirect.backend.service.AuthenticationServiceHandler.checkHash;
+import static ai.mcpdirect.backend.service.AIPortServiceResponse.*;
 
 @ServiceName("account.management")
 @ServiceRequestMapping("/")
-public class AccountServiceHandler extends ServiceRequestAuthenticationHandler implements AccountServiceErrors{
+public class AccountServiceHandler extends ServiceRequestAuthenticationHandler{
     private AccountDataHelper helper;
     private AccountMapper accountMapper;
 //    private ServiceEngine engine;
@@ -176,13 +177,13 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
         if (credentials != null) {
             String password = credentials.password.toLowerCase();
             if (!checkHash(req.secretKey, password, Long.toString(req.timestamp))) {
-                resp.code = AccountServiceErrors.PASSWORD_INCORRECT;
+                resp.code = AIPortServiceResponse.PASSWORD_INCORRECT;
                 return;
             }
             accountMapper.updateUserAccountPassword(account.id, req.password);
             resp.success(true);
         }else{
-            resp.code = AccountServiceErrors.ACCOUNT_NOT_EXIST;
+            resp.code = AIPortServiceResponse.ACCOUNT_NOT_EXIST;
         }
     }
 
@@ -234,11 +235,13 @@ public class AccountServiceHandler extends ServiceRequestAuthenticationHandler i
                 accessKey.status = -1;
                 accountMapper.deleteAccessKey(account.id,accessKey.id);
             }else {
-                accessKey.name = (req.name!=null&&!(req.name= req.name.trim()).isEmpty())?req.name:null;
-                if(accessKey.name!=null&&req.status!=null) {
+                req.name = (req.name!=null&&!(req.name= req.name.trim()).isEmpty())?req.name:null;
+                if(req.name!=null&&req.status!=null) {
+                    accessKey.name = req.name;
                     accessKey.status = req.status;
                     accountMapper.updateAccessKey(accessKey);
-                }else if(accessKey.name!=null){
+                }else if(req.name!=null){
+                    accessKey.name = req.name;
                     accountMapper.updateAccessKeyName(accessKey);
                 }else if(req.status!=null){
                     accessKey.status = req.status;
