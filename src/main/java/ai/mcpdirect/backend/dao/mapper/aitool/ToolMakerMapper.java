@@ -23,6 +23,9 @@ public interface ToolMakerMapper {
             "VALUES (#{id}, #{created}, #{type}, #{name}, #{agentId},#{userId})")
     void insertToolMakerStub(AIPortToolMakerStub toolsMaker);
 
+    @Select("SELECT id,-1 as status,removed lastUpdated FROM "+TABLE_NAME_STUB+" WHERE removed>#{removed}")
+    List<AIPortToolMaker> selectToolMakerByRemoved(long removed);
+
     @Insert("INSERT INTO " + TABLE_NAME + " (id, created, status, last_updated, type, name, tags, agent_id,user_id,template_id) " +
             "VALUES (#{id}, #{created}, #{status}, #{lastUpdated}, #{type}, #{name}, #{tags}, #{agentId},#{userId},#{templateId})")
     void insertToolMaker(AIPortToolMaker toolsMaker);

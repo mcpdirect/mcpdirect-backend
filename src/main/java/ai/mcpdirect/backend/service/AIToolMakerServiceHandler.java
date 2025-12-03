@@ -193,6 +193,9 @@ public class AIToolMakerServiceHandler extends ServiceRequestAuthenticationHandl
         }else{
             list.addAll(toolMapper.selectToolMakersByTeamMemberId(account.id,req.lastUpdated));
         }
+        if(req.lastUpdated>0){
+            list.addAll(toolMapper.selectToolMakerByRemoved(req.lastUpdated));
+        }
         resp.success(list);
     }
 

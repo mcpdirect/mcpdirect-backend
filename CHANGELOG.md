@@ -3,6 +3,16 @@
 ## 2025-12-01
 
 ### Summary
+Added removed field to tool maker queries
+
+### Details
+- Added selectToolMakerByRemoved method to ToolMakerMapper to query removed tool makers
+- Modified queryToolMakers endpoint to include removed tool makers in the response when lastUpdated is greater than 0
+- Added a new SELECT query to return id, status (-1), and removed timestamp for removed tool makers
+
+## 2025-12-01
+
+### Summary
 Added tool access key functionality and refactored entity classes
 
 ### Details
