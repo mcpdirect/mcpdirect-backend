@@ -51,8 +51,8 @@ public interface ToolAccessKeyMapper {
     List<AIPortToolAccessKey> selectAccessKeyByUserId(long userId);
 
     @Insert("INSERT INTO "+accessKeyTable+
-            "(id, secret_key,\"name\",status,effective_date, expiration_date, user_id, user_roles,created)VALUES" +
-            "(#{id},#{secretKey},#{name},#{status},#{effectiveDate},#{expirationDate},#{userId},#{userRoles},#{created})")
+            "(id, secret_key,\"name\",status,effective_date, expiration_date, user_id,created)VALUES" +
+            "(#{id},#{secretKey},#{name},#{status},#{effectiveDate},#{expirationDate},#{userId},#{created})")
     void insertAccessKeyCredential(AIPortToolAccessKeyCredential accessKey);
 
     @Update("UPDATE "+accessKeyTable+" SET name=#{name}, status=#{status} WHERE user_Id=#{userId} and id=#{id}>")

@@ -3,12 +3,12 @@
 ## 2025-12-01
 
 ### Summary
-Added removed field to tool maker queries
+Bumped version to 2.2.1-SNAPSHOT and fixed mapper interface usage
 
 ### Details
-- Added selectToolMakerByRemoved method to ToolMakerMapper to query removed tool makers
-- Modified queryToolMakers endpoint to include removed tool makers in the response when lastUpdated is greater than 0
-- Added a new SELECT query to return id, status (-1), and removed timestamp for removed tool makers
+- Bumped project version from 2.2.0-SNAPSHOT to 2.2.1-SNAPSHOT in pom.xml
+- Removed user_roles field from ToolAccessKeyMapper insert query
+- Fixed VirtualToolMapper initialization in AIToolServiceHandler to use AIToolMapper.class
 
 ## 2025-12-01
 

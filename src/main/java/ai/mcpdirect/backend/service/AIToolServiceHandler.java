@@ -212,7 +212,7 @@ public class AIToolServiceHandler extends ServiceRequestAuthenticationHandler{
         if(req.makerId>0&&req.tools!=null) {
             resp.success(helper.executeSql((sqlSession -> {
                 List<AIPortVirtualTool> list = new ArrayList<>();
-                VirtualToolMapper mapper = sqlSession.getMapper(VirtualToolMapper.class);
+                VirtualToolMapper mapper = sqlSession.getMapper(AIToolMapper.class);
                 for (AIPortVirtualTool tool : req.tools) {
                     tool.makerId = req.makerId;
                     tool.lastUpdated = System.currentTimeMillis();
